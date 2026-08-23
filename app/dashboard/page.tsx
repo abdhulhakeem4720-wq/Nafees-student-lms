@@ -1,12 +1,12 @@
 "use client";
-export const dynamic = 'force-dynamic';
-import { useEffect, useState } from "react";
+
+import { useEffect, useState, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { StudyStore } from "@/lib/store";
 import { SubjectItem, MaterialItem, QuizItem, PaymentItem, UserProfile } from "@/lib/mockData";
 
-export default function StudentDashboardPage() {
+function StudentDashboardContent() {
   const searchParams = useSearchParams();
   const hasAccessError = searchParams.get("error") === "access_denied";
 
@@ -191,5 +191,12 @@ export default function StudentDashboardPage() {
       </div>
 
     </div>
+  );
+}
+export default function StudentDashboardPage() {
+  return (
+    <Suspense fallback={<div className="p-4 text-center">Loading dashboard...</div>}>
+      <StudentDashboardContent />
+    </Suspense>
   );
 }
