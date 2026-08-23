@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -42,7 +42,7 @@ export default function StudentDashboardPage() {
 
   return (
     <div className="space-y-8">
-      
+
       {/* Access Denied Security Alert Banner if student tried accessing /admin */}
       {hasAccessError && (
         <div className="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center gap-3">
@@ -121,7 +121,7 @@ export default function StudentDashboardPage() {
 
       {/* Grid Section: My Registered Subjects & Recent Materials */}
       <div className="grid md:grid-cols-2 gap-6">
-        
+
         {/* Registered Subjects */}
         <div className="glass-card p-6 rounded-2xl">
           <div className="flex items-center justify-between mb-4">
