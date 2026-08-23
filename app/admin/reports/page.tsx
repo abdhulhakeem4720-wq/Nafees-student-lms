@@ -1,0 +1,125 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { StudyStore } from "@/lib/store";
+import { PaymentItem, SubjectItem } from "@/lib/mockData";
+import Logo from "@/components/Logo";
+
+export default function AdminReportsPage() {
+  const [payments, setPayments] = useState<PaymentItem[]>([]);
+  const [subjects, setSubjects] = useState<SubjectItem[]>([]);
+
+  useEffect(() => {
+    setPayments(StudyStore.getPayments());
+    setSubjects(StudyStore.getSubjects());
+  }, []);
+
+  const approvedPayments = payments.filter((p) => p.status === "Approved");
+  const totalIncome = approvedPayments.reduce((sum, p) => sum + p.amount, 0);
+
+  function handlePrint() {
+    window.print();
+  }
+
+  function handleExportCSV() {
+    let csvContent = "data:text/csv;charset=utf-8,ID,Student Name,Email,Grade,Subject,Amount,Status,Date\n";
+    payments.forEach((p) => {
+      csvContent += `${p.id},"${p.studentName}",${p.studentEmail},${p.grade},"${p.subjectTitle}",${p.amount},${p.status},"${p.submittedAt}"\n`;
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `StudyWithNafees_Report_${new Date().toISOString().split("T")[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+
+  return (
+    <div className="space-y-8 print:p-0 print:bg-white print:text-black">
+      
+      {/* Header Controls (Hidden on Print) */}
+      <div className="p-6 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+        <div>
+          <span className="badge badge-brand mb-1">Financial & Enrollment Analytics</span>
+          <h1 className="text-2xl font-bold text-white">Academy Reports & Export</h1>
+          <p className="text-xs text-slate-400">Generate printable statements, student registration lists, and financial summaries.</p>
+        </div>
+
+        <div className="flex gap-3">
+          <button onClick={handleExportCSV} className="btn-secondary text-xs py-2 px-4">
+            📥 Export CSV
+          </button>
+          <button onClick={handlePrint} className="btn-emerald text-xs py-2 px-4 shadow-emerald-500/20">
+            🖨️ Print Report
+          </button>
+        </div>
+      </div>
+
+      {/* Printable Report Document */}
+      <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-8 print:border-none print:shadow-none print:p-0">
+        
+        {/* Document Header */}
+        <div className="border-b border-white/10 pb-6 flex items-center justify-between print:border-slate-300">
+          <div>
+            <Logo size="md" href="" />
+            <p className="text-xs text-slate-400 print:text-slate-600 mt-2">Official Science & Mathematics Student Register Report</p>
+          </div>
+          <div className="text-right text-xs text-slate-400 print:text-slate-600">
+            <div>Date: {new Date().toLocaleDateString()}</div>
+            <div>Director: Nafees</div>
+          </div>
+        </div>
+
+        {/* Summary Metric Cards */}
+        <div className="grid grid-cols-3 gap-4">
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Enrolled Subjects</span>
+            <span className="text-2xl font-bold text-white print:text-black">{subjects.length} Courses</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Verified Income</span>
+            <span className="text-2xl font-bold text-emerald-400 print:text-emerald-700">LKR {totalIncome.toLocaleString()}</span>
+          </div>
+          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Payment Slips</span>
+            <span className="text-2xl font-bold text-white print:text-black">{payments.length} Slips</span>
+          </div>
+        </div>
+
+        {/* Financial Payment Slip Breakdown Table */}
+        <div className="space-y-3">
+          <h3 className="font-bold text-base text-white print:text-black">Financial Payment Register Summary</h3>
+
+          <table className="w-full text-left border-collapse text-xs">
+            <thead>
+              <tr className="border-b border-white/10 bg-slate-900/60 text-slate-300 print:bg-slate-100 print:text-black print:border-slate-300">
+                <th className="p-3 font-bold">Student Name</th>
+                <th className="p-3 font-bold">Grade</th>
+                <th className="p-3 font-bold">Subject</th>
+                <th className="p-3 font-bold">Amount (LKR)</th>
+                <th className="p-3 font-bold">Status</th>
+                <th className="p-3 font-bold">Date</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/5 print:divide-slate-200">
+              {payments.map((p) => (
+                <tr key={p.id} className="print:text-black">
+                  <td className="p-3 font-bold text-white print:text-black">{p.studentName}</td>
+                  <td className="p-3">Grade {p.grade}</td>
+                  <td className="p-3">{p.subjectTitle}</td>
+                  <td className="p-3 font-bold">{p.amount.toLocaleString()}</td>
+                  <td className="p-3 font-semibold">{p.status}</td>
+                  <td className="p-3 text-slate-400 print:text-slate-600">{p.submittedAt}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+
+    </div>
+  );
+}
