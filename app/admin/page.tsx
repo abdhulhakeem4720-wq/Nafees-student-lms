@@ -1,5 +1,5 @@
 "use client";
-
+export const dynamic = 'force-dynamic';
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { StudyStore } from "@/lib/store";
@@ -24,7 +24,7 @@ export default function AdminOverviewPage() {
 
   return (
     <div className="space-y-8">
-      
+
       {/* Executive Welcome Banner */}
       <div className="p-8 rounded-3xl bg-gradient-to-r from-emerald-950 via-slate-900 to-brand-950/80 border border-white/10 relative overflow-hidden shadow-2xl">
         <div className="absolute right-6 top-1/2 -translate-y-1/2 opacity-10 text-8xl pointer-events-none">
