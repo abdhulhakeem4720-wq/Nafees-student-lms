@@ -94,16 +94,16 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-950 bg-study-grid bg-study-glow">
-      <div className="w-full max-w-xl p-8 rounded-3xl glass-panel shadow-2xl border border-white/10 relative z-10">
+    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
+      <div className="w-full max-w-xl p-8 rounded-3xl glass-panel shadow-2xl border border-slate-200 relative z-10">
         
         <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
+          <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 transition flex items-center gap-1">
             ← Back to Home
           </Link>
-          <span className="text-xs text-slate-400">
+          <span className="text-xs text-slate-500">
             Already have an account?{" "}
-            <Link href="/login" className="text-brand-400 font-semibold hover:underline">
+            <Link href="/login" className="text-brand-600 font-semibold hover:underline">
               Log in
             </Link>
           </span>
@@ -113,8 +113,8 @@ export default function RegisterPage() {
           <div className="mb-4">
             <Logo size="md" href="/" />
           </div>
-          <h1 className="text-2xl font-extrabold text-white tracking-tight">Create Your Student Account</h1>
-          <p className="text-slate-400 text-xs mt-1">Enroll for Science & Mathematics (Grades 6–10)</p>
+          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Create Your Student Account</h1>
+          <p className="text-slate-500 text-xs mt-1">Enroll for Science & Mathematics (Grades 6–10)</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -168,7 +168,7 @@ export default function RegisterPage() {
                   className={`py-3 rounded-xl text-xs font-bold transition-all border ${
                     grade === g
                       ? "bg-brand-600 border-brand-400 text-white shadow-lg shadow-brand-500/30 scale-[1.03]"
-                      : "bg-slate-900/60 border-white/10 text-slate-400 hover:text-white hover:bg-slate-800"
+                      : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                   }`}
                 >
                   Grade {g}
@@ -191,7 +191,7 @@ export default function RegisterPage() {
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs">
+            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs">
               ⚠️ {error}
             </div>
           )}
@@ -199,13 +199,13 @@ export default function RegisterPage() {
           <button
             type="submit"
             disabled={loading}
-            className="btn-emerald w-full py-3.5 text-sm font-bold mt-4"
+            className="btn-blue w-full py-3.5 text-sm font-bold mt-4"
           >
             {loading ? "Creating Account & Notifying Admin..." : "Complete Registration & Launch Hub"}
           </button>
         </form>
 
-        <p className="text-center text-[11px] text-slate-500 mt-6">
+        <p className="text-center text-[11px] text-slate-400 mt-6">
           By registering, your profile is recorded and an alert is automatically sent to Nafees.
         </p>
       </div>

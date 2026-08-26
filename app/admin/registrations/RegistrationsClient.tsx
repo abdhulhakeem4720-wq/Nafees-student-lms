@@ -18,7 +18,7 @@ export default function RegistrationsClient({ rows }: { rows: any[] }) {
 
   return (
     <table className="w-full text-sm bg-white rounded-xl overflow-hidden border border-slate-200">
-      <thead className="bg-slate-100 text-left text-slate-600">
+      <thead className="bg-slate-50 text-left text-slate-600">
         <tr>
           <th className="p-3">Student</th>
           <th>Grade</th>
@@ -29,14 +29,14 @@ export default function RegistrationsClient({ rows }: { rows: any[] }) {
       </thead>
       <tbody>
         {rows.map((r) => (
-          <tr key={r.id} className="border-t">
+          <tr key={r.id} className="border-t border-slate-200">
             <td className="p-3">
               {r.profiles?.full_name}
-              <div className="text-xs text-slate-400">{r.profiles?.email}</div>
+              <div className="text-xs text-slate-500">{r.profiles?.email}</div>
             </td>
-            <td>{r.subjects?.grade}</td>
-            <td>{r.subjects?.name}</td>
-            <td className="capitalize">{r.status}</td>
+            <td className="text-slate-700">{r.subjects?.grade}</td>
+            <td className="text-slate-700">{r.subjects?.name}</td>
+            <td className="capitalize text-slate-700">{r.status}</td>
             <td className="p-3 flex gap-2">
               <button
                 className="btn-secondary text-xs"

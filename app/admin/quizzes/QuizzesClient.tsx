@@ -86,7 +86,7 @@ export default function QuizzesClient({ subjects }: { subjects: Subject[] }) {
       </div>
 
       {questions.map((q, i) => (
-        <div key={i} className="border rounded-lg p-3 space-y-2">
+        <div key={i} className="border rounded-lg p-3 space-y-2 border-slate-200">
           <label className="label">Question {i + 1}</label>
           <input className="input" value={q.question} onChange={(e) => updateQuestion(i, { question: e.target.value })} />
           {q.options.map((opt, oIdx) => (

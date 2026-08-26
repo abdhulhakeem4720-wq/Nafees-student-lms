@@ -25,13 +25,13 @@ export default function AdminRegistrationsPage() {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="badge badge-brand mb-1">Student Directory</span>
-          <h1 className="text-2xl font-bold text-white">Student Registrations</h1>
-          <p className="text-xs text-slate-400">View and manage enrolled students across Grades 6–10.</p>
+          <h1 className="text-2xl font-bold text-slate-900">Student Registrations</h1>
+          <p className="text-xs text-slate-500">View and manage enrolled students across Grades 6–10.</p>
         </div>
-        <span className="badge badge-emerald">{filteredStudents.length} Students Listed</span>
+        <span className="badge badge-blue">{filteredStudents.length} Students Listed</span>
       </div>
 
       {/* Filter Controls */}
@@ -50,7 +50,7 @@ export default function AdminRegistrationsPage() {
           <select
             value={gradeFilter}
             onChange={(e) => setGradeFilter(e.target.value)}
-            className="glass-input w-full bg-slate-900"
+            className="glass-input w-full bg-white"
           >
             <option value="all">All Grades (6–10)</option>
             <option value="6">Grade 6</option>
@@ -63,11 +63,11 @@ export default function AdminRegistrationsPage() {
       </div>
 
       {/* Registrations Table */}
-      <div className="glass-panel rounded-2xl border border-white/10 overflow-hidden">
+      <div className="glass-panel rounded-2xl border border-slate-200 overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-white/10 bg-slate-900/60 text-slate-300">
+              <tr className="border-b border-slate-200 bg-slate-50 text-slate-600">
                 <th className="p-4 font-bold">Student Name</th>
                 <th className="p-4 font-bold">Contact Email</th>
                 <th className="p-4 font-bold">Phone</th>
@@ -76,23 +76,23 @@ export default function AdminRegistrationsPage() {
                 <th className="p-4 font-bold">Status</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5">
+            <tbody className="divide-y divide-slate-200">
               {filteredStudents.map((s) => (
-                <tr key={s.id} className="hover:bg-white/5 transition">
-                  <td className="p-4 font-bold text-white flex items-center gap-2">
-                    <div className="w-7 h-7 rounded-full bg-brand-600/30 flex items-center justify-center text-brand-300 font-bold text-[11px]">
+                <tr key={s.id} className="hover:bg-blue-50 transition">
+                  <td className="p-4 font-bold text-slate-900 flex items-center gap-2">
+                    <div className="w-7 h-7 rounded-full bg-brand-600/20 flex items-center justify-center text-brand-700 font-bold text-[11px]">
                       {s.name.charAt(0)}
                     </div>
                     {s.name}
                   </td>
-                  <td className="p-4 text-slate-300">{s.email}</td>
-                  <td className="p-4 text-slate-400">{s.phone}</td>
+                  <td className="p-4 text-slate-600">{s.email}</td>
+                  <td className="p-4 text-slate-500">{s.phone}</td>
                   <td className="p-4">
                     <span className="badge badge-brand">Grade {s.grade}</span>
                   </td>
-                  <td className="p-4 text-slate-200">{s.enrolled}</td>
+                  <td className="p-4 text-slate-700">{s.enrolled}</td>
                   <td className="p-4">
-                    <span className="badge badge-emerald">Active Seat</span>
+                    <span className="badge badge-blue">Active Seat</span>
                   </td>
                 </tr>
               ))}

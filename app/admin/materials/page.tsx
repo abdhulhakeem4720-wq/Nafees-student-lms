@@ -103,29 +103,29 @@ export default function AdminMaterialsPage() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10">
+      <div className="p-6 rounded-2xl glass-card border border-slate-200">
         <span className="badge badge-brand mb-1">Study Content Management</span>
-        <h1 className="text-2xl font-bold text-white">Upload Study Notes & Documents</h1>
-        <p className="text-xs text-slate-400">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–10 students.</p>
+        <h1 className="text-2xl font-bold text-slate-900">Upload Study Notes & Documents</h1>
+        <p className="text-xs text-slate-500">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–10 students.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
         
         {/* New Material Form */}
         <div className="md:col-span-5 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+          <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2">
             <span>📄 Add New Document / Resource</span>
           </h2>
 
           <form onSubmit={handleAddMaterial} className="space-y-4">
             
             {/* Mode Switcher Pills */}
-            <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-900 border border-white/10 text-xs">
+            <div className="grid grid-cols-2 p-1 rounded-xl bg-slate-100 border border-slate-200 text-xs">
               <button
                 type="button"
                 onClick={() => setUploadMode("file")}
                 className={`py-2 rounded-lg font-bold transition ${
-                  uploadMode === "file" ? "bg-emerald-600 text-white shadow" : "text-slate-400 hover:text-white"
+                  uploadMode === "file" ? "bg-blue-600 text-white shadow" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 📁 File Upload
@@ -134,7 +134,7 @@ export default function AdminMaterialsPage() {
                 type="button"
                 onClick={() => setUploadMode("url")}
                 className={`py-2 rounded-lg font-bold transition ${
-                  uploadMode === "url" ? "bg-brand-600 text-white shadow" : "text-slate-400 hover:text-white"
+                  uploadMode === "url" ? "bg-brand-600 text-white shadow" : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 🔗 External Link
@@ -145,7 +145,7 @@ export default function AdminMaterialsPage() {
             {uploadMode === "file" ? (
               <div>
                 <label className="label">Upload Document File (PDF, DOCX, PPTX, TXT, Image)</label>
-                <div className="border-2 border-dashed border-emerald-500/40 hover:border-emerald-400 rounded-xl p-4 text-center transition cursor-pointer bg-slate-900/60 relative">
+                <div className="border-2 border-dashed border-blue-300 hover:border-blue-400 rounded-xl p-4 text-center transition cursor-pointer bg-white relative">
                   <input
                     type="file"
                     accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,image/*"
@@ -157,14 +157,14 @@ export default function AdminMaterialsPage() {
                     {selectedFileName ? (
                       <div className="space-y-1 py-1">
                         <span className="text-3xl block">📄</span>
-                        <span className="text-xs font-bold text-emerald-400 block truncate px-2">{selectedFileName}</span>
-                        <span className="text-[10px] text-slate-400 block">File Size: {fileSize} • Click to replace file</span>
+                        <span className="text-xs font-bold text-blue-600 block truncate px-2">{selectedFileName}</span>
+                        <span className="text-[10px] text-slate-500 block">File Size: {fileSize} • Click to replace file</span>
                       </div>
                     ) : (
                       <div className="space-y-1.5 py-3">
                         <span className="text-3xl block">📤</span>
-                        <span className="text-xs font-bold text-white block">Click to select document file from computer</span>
-                        <span className="text-[10px] text-slate-400 block">Supports PDF, DOCX, PPTX, TXT up to 25MB</span>
+                        <span className="text-xs font-bold text-slate-900 block">Click to select document file from computer</span>
+                        <span className="text-[10px] text-slate-500 block">Supports PDF, DOCX, PPTX, TXT up to 25MB</span>
                       </div>
                     )}
                   </label>
@@ -200,7 +200,7 @@ export default function AdminMaterialsPage() {
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="glass-input w-full bg-slate-900"
+                className="glass-input w-full bg-white"
               >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -216,7 +216,7 @@ export default function AdminMaterialsPage() {
                 <select
                   value={fileType}
                   onChange={(e) => setFileType(e.target.value as any)}
-                  className="glass-input w-full bg-slate-900"
+                  className="glass-input w-full bg-white"
                 >
                   <option value="PDF Note">PDF Note</option>
                   <option value="Formula Sheet">Formula Sheet</option>
@@ -237,7 +237,7 @@ export default function AdminMaterialsPage() {
               </div>
             </div>
 
-            <button type="submit" className="btn-emerald w-full py-3.5 text-xs font-bold shadow-emerald-500/25">
+            <button type="submit" className="btn-blue w-full py-3.5 text-xs font-bold">
               Publish Document to Student Hub
             </button>
           </form>
@@ -245,18 +245,18 @@ export default function AdminMaterialsPage() {
 
         {/* Existing Materials List */}
         <div className="md:col-span-7 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4">📂 Published Documents ({materials.length})</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">📂 Published Documents ({materials.length})</h2>
 
           <div className="space-y-3">
             {materials.map((mat) => (
-              <div key={mat.id} className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+              <div key={mat.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="badge badge-emerald">Grade {mat.grade}</span>
+                    <span className="badge badge-blue">Grade {mat.grade}</span>
                     <span className="badge badge-amber">{mat.type}</span>
                   </div>
-                  <h3 className="font-bold text-xs text-white line-clamp-1">{mat.title}</h3>
-                  <span className="text-[10px] text-slate-400">{mat.subjectTitle} • {mat.fileSize} • {mat.downloads} Downloads</span>
+                  <h3 className="font-bold text-xs text-slate-900 line-clamp-1">{mat.title}</h3>
+                  <span className="text-[10px] text-slate-500">{mat.subjectTitle} • {mat.fileSize} • {mat.downloads} Downloads</span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -273,7 +273,7 @@ export default function AdminMaterialsPage() {
                   )}
                   <button
                     onClick={() => handleDelete(mat.id)}
-                    className="text-xs text-red-400 hover:text-red-300 font-bold p-2 hover:bg-red-500/10 rounded-lg transition"
+                    className="text-xs text-red-600 hover:text-red-700 font-bold p-2 hover:bg-red-50 rounded-lg transition"
                   >
                     🗑️
                   </button>

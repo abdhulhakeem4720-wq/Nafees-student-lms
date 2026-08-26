@@ -40,33 +40,33 @@ export default function AdminReportsPage() {
     <div className="space-y-8 print:p-0 print:bg-white print:text-black">
       
       {/* Header Controls (Hidden on Print) */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
+      <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
           <span className="badge badge-brand mb-1">Financial & Enrollment Analytics</span>
-          <h1 className="text-2xl font-bold text-white">Academy Reports & Export</h1>
-          <p className="text-xs text-slate-400">Generate printable statements, student registration lists, and financial summaries.</p>
+          <h1 className="text-2xl font-bold text-slate-900">Academy Reports & Export</h1>
+          <p className="text-xs text-slate-500">Generate printable statements, student registration lists, and financial summaries.</p>
         </div>
 
         <div className="flex gap-3">
           <button onClick={handleExportCSV} className="btn-secondary text-xs py-2 px-4">
             📥 Export CSV
           </button>
-          <button onClick={handlePrint} className="btn-emerald text-xs py-2 px-4 shadow-emerald-500/20">
+          <button onClick={handlePrint} className="btn-blue text-xs py-2 px-4">
             🖨️ Print Report
           </button>
         </div>
       </div>
 
       {/* Printable Report Document */}
-      <div className="glass-panel p-8 rounded-3xl border border-white/10 space-y-8 print:border-none print:shadow-none print:p-0">
+      <div className="glass-panel p-8 rounded-3xl border border-slate-200 space-y-8 print:border-none print:shadow-none print:p-0">
         
         {/* Document Header */}
-        <div className="border-b border-white/10 pb-6 flex items-center justify-between print:border-slate-300">
+        <div className="border-b border-slate-200 pb-6 flex items-center justify-between print:border-slate-300">
           <div>
             <Logo size="md" href="" />
-            <p className="text-xs text-slate-400 print:text-slate-600 mt-2">Official Science & Mathematics Student Register Report</p>
+            <p className="text-xs text-slate-500 print:text-slate-600 mt-2">Official Science & Mathematics Student Register Report</p>
           </div>
-          <div className="text-right text-xs text-slate-400 print:text-slate-600">
+          <div className="text-right text-xs text-slate-500 print:text-slate-600">
             <div>Date: {new Date().toLocaleDateString()}</div>
             <div>Director: Nafees</div>
           </div>
@@ -74,27 +74,27 @@ export default function AdminReportsPage() {
 
         {/* Summary Metric Cards */}
         <div className="grid grid-cols-3 gap-4">
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
-            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Enrolled Subjects</span>
-            <span className="text-2xl font-bold text-white print:text-black">{subjects.length} Courses</span>
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-500 print:text-slate-600 block mb-1">Total Enrolled Subjects</span>
+            <span className="text-2xl font-bold text-slate-900 print:text-black">{subjects.length} Courses</span>
           </div>
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
-            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Verified Income</span>
-            <span className="text-2xl font-bold text-emerald-400 print:text-emerald-700">LKR {totalIncome.toLocaleString()}</span>
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-500 print:text-slate-600 block mb-1">Total Verified Income</span>
+            <span className="text-2xl font-bold text-blue-600 print:text-blue-700">LKR {totalIncome.toLocaleString()}</span>
           </div>
-          <div className="p-4 rounded-2xl bg-white/5 border border-white/10 print:border-slate-300 print:bg-slate-50">
-            <span className="text-xs text-slate-400 print:text-slate-600 block mb-1">Total Payment Slips</span>
-            <span className="text-2xl font-bold text-white print:text-black">{payments.length} Slips</span>
+          <div className="p-4 rounded-2xl bg-blue-50 border border-blue-200 print:border-slate-300 print:bg-slate-50">
+            <span className="text-xs text-slate-500 print:text-slate-600 block mb-1">Total Payment Slips</span>
+            <span className="text-2xl font-bold text-slate-900 print:text-black">{payments.length} Slips</span>
           </div>
         </div>
 
         {/* Financial Payment Slip Breakdown Table */}
         <div className="space-y-3">
-          <h3 className="font-bold text-base text-white print:text-black">Financial Payment Register Summary</h3>
+          <h3 className="font-bold text-base text-slate-900 print:text-black">Financial Payment Register Summary</h3>
 
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="border-b border-white/10 bg-slate-900/60 text-slate-300 print:bg-slate-100 print:text-black print:border-slate-300">
+              <tr className="border-b border-slate-200 bg-slate-50 text-slate-600 print:bg-slate-100 print:text-black print:border-slate-300">
                 <th className="p-3 font-bold">Student Name</th>
                 <th className="p-3 font-bold">Grade</th>
                 <th className="p-3 font-bold">Subject</th>
@@ -103,15 +103,15 @@ export default function AdminReportsPage() {
                 <th className="p-3 font-bold">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-white/5 print:divide-slate-200">
+            <tbody className="divide-y divide-slate-200 print:divide-slate-200">
               {payments.map((p) => (
                 <tr key={p.id} className="print:text-black">
-                  <td className="p-3 font-bold text-white print:text-black">{p.studentName}</td>
-                  <td className="p-3">Grade {p.grade}</td>
-                  <td className="p-3">{p.subjectTitle}</td>
-                  <td className="p-3 font-bold">{p.amount.toLocaleString()}</td>
-                  <td className="p-3 font-semibold">{p.status}</td>
-                  <td className="p-3 text-slate-400 print:text-slate-600">{p.submittedAt}</td>
+                  <td className="p-3 font-bold text-slate-900 print:text-black">{p.studentName}</td>
+                  <td className="p-3 text-slate-700">Grade {p.grade}</td>
+                  <td className="p-3 text-slate-700">{p.subjectTitle}</td>
+                  <td className="p-3 font-bold text-slate-900">{p.amount.toLocaleString()}</td>
+                  <td className="p-3 font-semibold text-slate-700">{p.status}</td>
+                  <td className="p-3 text-slate-500 print:text-slate-600">{p.submittedAt}</td>
                 </tr>
               ))}
             </tbody>

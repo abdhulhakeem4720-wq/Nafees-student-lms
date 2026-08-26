@@ -21,10 +21,10 @@ export default async function TakeQuizPage({ params }: { params: { id: string } 
 
   return (
     <div className="max-w-2xl">
-      <h1 className="text-2xl font-bold mb-6">{quiz?.title}</h1>
+      <h1 className="text-2xl font-bold mb-6 text-slate-900">{quiz?.title}</h1>
       {existing ? (
         <div className="card">
-          You already completed this quiz. Score: {existing.score}/{existing.total}
+          <p className="text-slate-600">You already completed this quiz. Score: {existing.score}/{existing.total}</p>
         </div>
       ) : (
         <QuizRunner quizId={params.id} studentId={user!.id} questions={(questions ?? []) as any} />

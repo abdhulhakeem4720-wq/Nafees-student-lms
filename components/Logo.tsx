@@ -17,7 +17,7 @@ export default function Logo({ size = "md", href = "/", showSubtitle = true }: L
   const content = (
     <div className="flex items-center gap-3">
       {/* Nafees Photo Logo Container */}
-      <div className={`${imageSizeClass} rounded-2xl overflow-hidden border-2 border-emerald-400/80 shadow-lg shadow-emerald-500/25 flex-shrink-0 bg-slate-900 relative group`}>
+      <div className={`${imageSizeClass} rounded-2xl overflow-hidden border-2 border-blue-400/80 shadow-lg shadow-blue-500/25 flex-shrink-0 bg-white relative group`}>
         <img
           src="/api/logo"
           alt="STUDY WITH NAFEES Logo"
@@ -31,11 +31,11 @@ export default function Logo({ size = "md", href = "/", showSubtitle = true }: L
 
       {/* Brand Text */}
       <div>
-        <span className={`font-black tracking-tight text-white block ${titleSizeClass} bg-clip-text text-transparent bg-gradient-to-r from-white via-slate-100 to-emerald-300`}>
+        <span className={`font-black tracking-tight text-slate-900 block ${titleSizeClass} bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800`}>
           STUDY WITH NAFEES
         </span>
         {showSubtitle && (
-          <span className="block text-[10px] text-emerald-400 font-bold uppercase tracking-wider">
+          <span className="block text-[10px] text-blue-600 font-bold uppercase tracking-wider">
             Science & Mathematics • Grades 6–10
           </span>
         )}

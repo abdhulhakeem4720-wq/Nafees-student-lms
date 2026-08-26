@@ -80,25 +80,25 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-950 bg-study-grid bg-study-glow">
+    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
       {/* Background Floating Study Aesthetics */}
-      <div className="absolute top-12 left-12 w-72 h-72 bg-brand-600/20 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
-      <div className="absolute bottom-12 right-12 w-80 h-80 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute top-12 left-12 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
+      <div className="absolute bottom-12 right-12 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
 
-      <div className="w-full max-w-4xl grid md:grid-cols-12 rounded-3xl overflow-hidden glass-panel shadow-2xl border border-white/10 relative z-10">
+      <div className="w-full max-w-4xl grid md:grid-cols-12 rounded-3xl overflow-hidden glass-panel shadow-2xl border border-slate-200 relative z-10">
         
         {/* Left Side: Creative Study Hub Info & Quote */}
-        <div className="md:col-span-5 p-8 bg-gradient-to-br from-brand-900/60 via-slate-900/80 to-slate-950/90 border-b md:border-b-0 md:border-r border-white/10 flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-5 p-8 bg-gradient-to-br from-blue-500/10 via-white to-blue-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between relative overflow-hidden">
           
           <div>
             <div className="mb-6">
               <Logo size="lg" href="/" />
             </div>
 
-            <h1 className="text-2xl font-extrabold text-white tracking-tight leading-tight mb-3">
+            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
               Master Science & Mathematics
             </h1>
-            <p className="text-slate-300 text-xs leading-relaxed mb-6">
+            <p className="text-slate-600 text-xs leading-relaxed mb-6">
               Join Sri Lanka's premier digital learning platform with Nafees. Access interactive study guides, live video notes, instant online quizzes, and direct payment slip submission.
             </p>
 
@@ -110,7 +110,7 @@ export default function LoginPage() {
                 { icon: "📝", text: "Instant Online Exam auto-grading" },
                 { icon: "💳", text: "Simple Slip Upload & Seat Verification" }
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-white/5 border border-white/5 text-xs font-medium text-slate-200">
+                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-700">
                   <span className="text-base">{item.icon}</span>
                   <span>{item.text}</span>
                 </div>
@@ -119,10 +119,10 @@ export default function LoginPage() {
           </div>
 
           {/* Motivational Footer */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <div className="p-3.5 rounded-xl bg-brand-500/10 border border-brand-500/20 text-xs text-brand-200 italic">
+          <div className="mt-8 pt-6 border-t border-slate-200">
+            <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 italic">
               "Education is the most powerful weapon which you can use to change the world."
-              <div className="font-semibold not-italic text-right text-emerald-400 mt-1">— STUDY WITH NAFEES</div>
+              <div className="font-semibold not-italic text-right text-blue-600 mt-1">— STUDY WITH NAFEES</div>
             </div>
           </div>
         </div>
@@ -132,29 +132,29 @@ export default function LoginPage() {
           <div>
             {/* Header Nav link */}
             <div className="flex items-center justify-between mb-6">
-              <Link href="/" className="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
+              <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 transition flex items-center gap-1">
                 ← Back to Home
               </Link>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-slate-500">
                 New student?{" "}
-                <Link href="/register" className="text-brand-400 font-semibold hover:underline">
+                <Link href="/register" className="text-brand-600 font-semibold hover:underline">
                   Register here
                 </Link>
               </span>
             </div>
 
-            <h2 className="text-2xl font-bold text-white mb-2">Welcome Back</h2>
-            <p className="text-xs text-slate-400 mb-6">Select your portal or use 1-click quick demo access.</p>
+            <h2 className="text-2xl font-bold text-slate-900 mb-2">Welcome Back</h2>
+            <p className="text-xs text-slate-500 mb-6">Select your portal or use 1-click quick demo access.</p>
 
             {/* Portal Tabs */}
-            <div className="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-900/80 border border-white/10 mb-6">
+            <div className="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200 mb-6">
               <button
                 type="button"
                 onClick={() => { setPortalType("student"); setError(null); }}
                 className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                   portalType === "student"
                     ? "bg-brand-600 text-white shadow-lg shadow-brand-500/25"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <span>🎓 Student Portal</span>
@@ -164,8 +164,8 @@ export default function LoginPage() {
                 onClick={() => { setPortalType("admin"); setError(null); }}
                 className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
                   portalType === "admin"
-                    ? "bg-emerald-600 text-white shadow-lg shadow-emerald-500/25"
-                    : "text-slate-400 hover:text-white"
+                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <span>🛡️ Admin Portal</span>
@@ -173,13 +173,13 @@ export default function LoginPage() {
             </div>
 
             {/* 1-CLICK QUICK DEMO LOGIN BOX */}
-            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-brand-900/30 to-emerald-900/30 border border-brand-500/30 relative">
+            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-400/10 border border-blue-500/20 relative">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping"></span>
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
+                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
                   Instant 1-Click Demo Login
                 </span>
-                <span className="text-[10px] text-slate-400">No password needed</span>
+                <span className="text-[10px] text-slate-500">No password needed</span>
               </div>
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
@@ -187,7 +187,7 @@ export default function LoginPage() {
                   type="button"
                   onClick={() => handleDemoLogin("student")}
                   disabled={loading}
-                  className="btn-emerald text-xs py-2.5 w-full"
+                  className="btn-blue text-xs py-2.5 w-full"
                 >
                   <span>🎓 Demo Grade 9 Student</span>
                 </button>
@@ -204,8 +204,8 @@ export default function LoginPage() {
 
             {/* Divider */}
             <div className="relative flex items-center justify-center my-6">
-              <div className="border-t border-white/10 w-full"></div>
-              <span className="bg-slate-950 px-3 text-[11px] text-slate-500 font-medium uppercase tracking-wider absolute">
+              <div className="border-t border-slate-200 w-full"></div>
+              <span className="bg-white px-3 text-[11px] text-slate-400 font-medium uppercase tracking-wider absolute">
                 Or Sign In With Account
               </span>
             </div>
@@ -237,7 +237,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs flex items-center gap-2">
                   <span>⚠️</span>
                   <span>{error}</span>
                 </div>
@@ -253,7 +253,7 @@ export default function LoginPage() {
             </form>
           </div>
 
-          <p className="text-center text-[11px] text-slate-500 mt-6">
+          <p className="text-center text-[11px] text-slate-400 mt-6">
             Secure 256-bit encrypted authentication • STUDY WITH NAFEES
           </p>
         </div>

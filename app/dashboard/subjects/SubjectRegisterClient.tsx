@@ -52,7 +52,7 @@ export default function SubjectRegisterClient({
           return (
             <div key={s.id} className="card flex items-center justify-between">
               <div>
-                <div className="font-medium">{s.name}</div>
+                <div className="font-medium text-slate-900">{s.name}</div>
                 <div className="text-sm text-slate-500 capitalize">
                   Grade {s.grade} · {s.category} · Rs. {s.fee}
                 </div>

@@ -46,17 +46,17 @@ export default function AdminMessagesPage() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10">
-        <span className="badge badge-emerald mb-1">Batch Communications</span>
-        <h1 className="text-2xl font-bold text-white">Send Batch Announcements & Emails</h1>
-        <p className="text-xs text-slate-400">Broadcast updates, exam alerts, or payment reminders separately by Grade (6–10) or Subject.</p>
+      <div className="p-6 rounded-2xl glass-card border border-slate-200">
+        <span className="badge badge-blue mb-1">Batch Communications</span>
+        <h1 className="text-2xl font-bold text-slate-900">Send Batch Announcements & Emails</h1>
+        <p className="text-xs text-slate-500">Broadcast updates, exam alerts, or payment reminders separately by Grade (6–10) or Subject.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
         
         {/* Compose Form */}
         <div className="md:col-span-6 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4">📢 Compose Batch Broadcast</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">📢 Compose Batch Broadcast</h2>
 
           <form onSubmit={handleSendBroadcast} className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
@@ -65,7 +65,7 @@ export default function AdminMessagesPage() {
                 <select
                   value={targetGrade}
                   onChange={(e) => setTargetGrade(e.target.value)}
-                  className="glass-input w-full bg-slate-900"
+                  className="glass-input w-full bg-white"
                 >
                   <option value="All">All Grades (6–10)</option>
                   <option value="6">Grade 6 Only</option>
@@ -81,7 +81,7 @@ export default function AdminMessagesPage() {
                 <select
                   value={targetSubject}
                   onChange={(e) => setTargetSubject(e.target.value)}
-                  className="glass-input w-full bg-slate-900"
+                  className="glass-input w-full bg-white"
                 >
                   <option value="All">All Subjects</option>
                   {subjects.map((s) => (
@@ -118,12 +118,12 @@ export default function AdminMessagesPage() {
             </div>
 
             {sentAlert && (
-              <div className="p-3 rounded-xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 text-xs">
+              <div className="p-3 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs">
                 ✅ {sentAlert}
               </div>
             )}
 
-            <button type="submit" disabled={loading} className="btn-emerald w-full py-3 text-xs font-bold">
+            <button type="submit" disabled={loading} className="btn-blue w-full py-3 text-xs font-bold">
               {loading ? "Broadcasting Email..." : `Broadcast Batch Email to Grade ${targetGrade}`}
             </button>
           </form>
@@ -131,18 +131,18 @@ export default function AdminMessagesPage() {
 
         {/* Message Logs */}
         <div className="md:col-span-6 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4">📜 Broadcast Announcement History</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">📜 Broadcast Announcement History</h2>
 
           <div className="space-y-4">
             {messages.map((msg) => (
-              <div key={msg.id} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+              <div key={msg.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 space-y-2">
                 <div className="flex items-center justify-between">
                   <span className="badge badge-brand">Grade {msg.targetGrade}</span>
-                  <span className="text-[10px] text-emerald-400 font-semibold">{msg.recipientCount} Recipients</span>
+                  <span className="text-[10px] text-blue-600 font-semibold">{msg.recipientCount} Recipients</span>
                 </div>
-                <h3 className="font-bold text-xs text-white">{msg.subjectLine}</h3>
-                <p className="text-xs text-slate-300 line-clamp-2">{msg.body}</p>
-                <div className="text-[10px] text-slate-500 border-t border-white/5 pt-2">
+                <h3 className="font-bold text-xs text-slate-900">{msg.subjectLine}</h3>
+                <p className="text-xs text-slate-600 line-clamp-2">{msg.body}</p>
+                <div className="text-[10px] text-slate-500 border-t border-slate-200 pt-2">
                   Sent on: {msg.sentAt}
                 </div>
               </div>

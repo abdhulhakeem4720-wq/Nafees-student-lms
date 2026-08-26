@@ -35,7 +35,7 @@ export default function PaymentsClient({ rows }: { rows: any[] }) {
 
   return (
     <table className="w-full text-sm bg-white rounded-xl overflow-hidden border border-slate-200">
-      <thead className="bg-slate-100 text-left text-slate-600">
+      <thead className="bg-slate-50 text-left text-slate-600">
         <tr>
           <th className="p-3">Student</th>
           <th>Amount</th>
@@ -46,13 +46,13 @@ export default function PaymentsClient({ rows }: { rows: any[] }) {
       </thead>
       <tbody>
         {rows.map((p) => (
-          <tr key={p.id} className="border-t">
+          <tr key={p.id} className="border-t border-slate-200">
             <td className="p-3">
               {p.profiles?.full_name}
-              <div className="text-xs text-slate-400">{p.profiles?.email}</div>
+              <div className="text-xs text-slate-500">{p.profiles?.email}</div>
             </td>
-            <td>Rs. {p.amount}</td>
-            <td className="capitalize">{p.status}</td>
+            <td className="text-slate-700">Rs. {p.amount}</td>
+            <td className="capitalize text-slate-700">{p.status}</td>
             <td>
               {p.proof_url && (
                 <button className="text-brand-600 underline" onClick={() => viewProof(p.proof_url)}>

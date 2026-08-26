@@ -76,17 +76,17 @@ export default function AdminQuizzesPage() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10">
-        <span className="badge badge-emerald mb-1">Exam Builder Studio</span>
-        <h1 className="text-2xl font-bold text-white">Create & Manage Online Quizzes</h1>
-        <p className="text-xs text-slate-400">Design timed multiple-choice online exams for Grade 6 to 10 Science & Mathematics.</p>
+      <div className="p-6 rounded-2xl glass-card border border-slate-200">
+        <span className="badge badge-blue mb-1">Exam Builder Studio</span>
+        <h1 className="text-2xl font-bold text-slate-900">Create & Manage Online Quizzes</h1>
+        <p className="text-xs text-slate-500">Design timed multiple-choice online exams for Grade 6 to 10 Science & Mathematics.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
         
         {/* Quiz Creator Form */}
         <div className="md:col-span-6 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4">📝 Build New Online Quiz</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">📝 Build New Online Quiz</h2>
 
           <form onSubmit={handleSaveQuiz} className="space-y-4">
             <div>
@@ -106,7 +106,7 @@ export default function AdminQuizzesPage() {
               <select
                 value={selectedSubjectId}
                 onChange={(e) => setSelectedSubjectId(e.target.value)}
-                className="glass-input w-full bg-slate-900"
+                className="glass-input w-full bg-white"
               >
                 {subjects.map((s) => (
                   <option key={s.id} value={s.id}>
@@ -140,20 +140,20 @@ export default function AdminQuizzesPage() {
             </div>
 
             {/* Questions Editor */}
-            <div className="pt-4 border-t border-white/10 space-y-4">
+            <div className="pt-4 border-t border-slate-200 space-y-4">
               <div className="flex items-center justify-between">
-                <span className="font-bold text-xs text-white">Questions List ({questions.length})</span>
+                <span className="font-bold text-xs text-slate-900">Questions List ({questions.length})</span>
                 <button
                   type="button"
                   onClick={handleAddQuestion}
-                  className="text-xs text-emerald-400 font-semibold hover:underline"
+                  className="text-xs text-blue-600 font-semibold hover:underline"
                 >
                   + Add Question
                 </button>
               </div>
 
               {questions.map((q, qIdx) => (
-                <div key={q.id} className="p-4 rounded-xl bg-white/5 border border-white/10 space-y-2">
+                <div key={q.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 space-y-2">
                   <label className="label">Question #{qIdx + 1}</label>
                   <input
                     type="text"
@@ -188,7 +188,7 @@ export default function AdminQuizzesPage() {
               ))}
             </div>
 
-            <button type="submit" className="btn-emerald w-full py-3 text-xs font-bold">
+            <button type="submit" className="btn-blue w-full py-3 text-xs font-bold">
               Save & Publish Online Quiz
             </button>
           </form>
@@ -196,23 +196,23 @@ export default function AdminQuizzesPage() {
 
         {/* Existing Quizzes List */}
         <div className="md:col-span-6 glass-card p-6 rounded-2xl">
-          <h2 className="text-lg font-bold text-white mb-4">⏱️ Published Quizzes ({quizzes.length})</h2>
+          <h2 className="text-lg font-bold text-slate-900 mb-4">⏱️ Published Quizzes ({quizzes.length})</h2>
 
           <div className="space-y-4">
             {quizzes.map((quiz) => (
-              <div key={quiz.id} className="p-4 rounded-xl bg-white/5 border border-white/10 flex items-center justify-between">
+              <div key={quiz.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
                     <span className="badge badge-brand">Grade {quiz.grade}</span>
                     <span className="badge badge-amber">{quiz.durationMinutes} Mins</span>
                   </div>
-                  <h3 className="font-bold text-xs text-white">{quiz.title}</h3>
-                  <span className="text-[10px] text-slate-400">{quiz.subjectTitle} • {quiz.questions.length} Questions</span>
+                  <h3 className="font-bold text-xs text-slate-900">{quiz.title}</h3>
+                  <span className="text-[10px] text-slate-500">{quiz.subjectTitle} • {quiz.questions.length} Questions</span>
                 </div>
 
                 <button
                   onClick={() => handleDeleteQuiz(quiz.id)}
-                  className="text-xs text-red-400 hover:text-red-300 font-bold p-2 hover:bg-red-500/10 rounded-lg transition"
+                  className="text-xs text-red-600 hover:text-red-700 font-bold p-2 hover:bg-red-50 rounded-lg transition"
                 >
                   🗑️ Delete
                 </button>

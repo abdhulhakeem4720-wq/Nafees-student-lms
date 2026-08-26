@@ -47,7 +47,7 @@ export default function QuizRunner({
   if (result) {
     return (
       <div className="card text-center">
-        <h2 className="text-xl font-bold mb-2">Quiz submitted</h2>
+        <h2 className="text-xl font-bold mb-2 text-slate-900">Quiz submitted</h2>
         <p className="text-slate-600">
           You scored {result.score} / {result.total}
         </p>
@@ -59,12 +59,12 @@ export default function QuizRunner({
     <div className="space-y-6">
       {questions.map((q, i) => (
         <div key={q.id} className="card">
-          <div className="font-medium mb-3">
+          <div className="font-medium mb-3 text-slate-900">
             {i + 1}. {q.question}
           </div>
           <div className="space-y-2">
             {q.options.map((opt, idx) => (
-              <label key={idx} className="flex items-center gap-2 text-sm">
+              <label key={idx} className="flex items-center gap-2 text-sm text-slate-700">
                 <input
                   type="radio"
                   name={q.id}

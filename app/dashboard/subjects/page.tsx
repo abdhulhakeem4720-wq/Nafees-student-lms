@@ -41,17 +41,17 @@ export default function StudentSubjectsPage() {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl glass-card border border-white/10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-2xl glass-card border border-slate-200">
         <div>
           <span className="badge badge-brand mb-1">Subject Registration</span>
-          <h1 className="text-2xl font-bold text-white">Science & Mathematics Catalog</h1>
-          <p className="text-xs text-slate-400">
-            Registered Grade: <span className="text-emerald-400 font-bold">Grade {user?.grade || 9}</span>
+          <h1 className="text-2xl font-bold text-slate-900">Science & Mathematics Catalog</h1>
+          <p className="text-xs text-slate-500">
+            Registered Grade: <span className="text-blue-600 font-bold">Grade {user?.grade || 9}</span>
           </p>
         </div>
 
         {/* Grade Selector Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
           {[6, 7, 8, 9, 10].map((g) => {
             const isUserGrade = user?.grade === g;
             return (
@@ -64,11 +64,11 @@ export default function StudentSubjectsPage() {
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
                   selectedGrade === g
                     ? "bg-brand-600 text-white shadow-md"
-                    : "text-slate-400 hover:text-white"
+                    : "text-slate-600 hover:text-slate-900"
                 }`}
               >
                 <span>Grade {g}</span>
-                {isUserGrade && <span className="text-[10px] text-emerald-300">★</span>}
+                {isUserGrade && <span className="text-[10px] text-blue-400">★</span>}
               </button>
             );
           })}
@@ -77,7 +77,7 @@ export default function StudentSubjectsPage() {
 
       {/* Grade Mismatch Error Alert */}
       {gradeError && (
-        <div className="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center gap-3">
+        <div className="p-4 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-3">
           <span className="text-xl">⚠️</span>
           <span>{gradeError}</span>
         </div>
@@ -85,7 +85,7 @@ export default function StudentSubjectsPage() {
 
       {/* Viewing Different Grade Warning Banner */}
       {isViewingDifferentGrade && (
-        <div className="p-4 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs flex items-center justify-between">
+        <div className="p-4 rounded-2xl bg-amber-50 border border-amber-200 text-amber-700 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span>🔒 View-Only Mode:</span>
             <span>You are enrolled in Grade {user?.grade}. Students cannot register for subjects outside their assigned grade level.</span>
@@ -113,34 +113,34 @@ export default function StudentSubjectsPage() {
               key={sub.id}
               className={`glass-card p-6 rounded-2xl border-l-4 transition-all ${
                 isEnrolled
-                  ? "border-l-emerald-500 bg-emerald-950/10"
+                  ? "border-l-blue-500 bg-blue-50"
                   : isSameGrade
                   ? "border-l-brand-500"
-                  : "border-l-slate-700 opacity-80"
+                  : "border-l-slate-300 opacity-80"
               }`}
             >
               <div className="flex items-center justify-between mb-3">
-                <span className={`badge ${sub.category === "Science" ? "badge-emerald" : "badge-brand"}`}>
+                <span className={`badge ${sub.category === "Science" ? "badge-blue" : "badge-brand"}`}>
                   {sub.category === "Science" ? "🧪 Science" : "📐 Mathematics"}
                 </span>
-                <span className="text-xs text-slate-400 font-mono">{sub.code}</span>
+                <span className="text-xs text-slate-500 font-mono">{sub.code}</span>
               </div>
 
-              <h3 className="text-xl font-bold text-white mb-2">{sub.title}</h3>
-              <p className="text-slate-300 text-xs leading-relaxed mb-4">{sub.description}</p>
+              <h3 className="text-xl font-bold text-slate-900 mb-2">{sub.title}</h3>
+              <p className="text-slate-600 text-xs leading-relaxed mb-4">{sub.description}</p>
 
-              <div className="space-y-1.5 text-xs text-slate-400 mb-6 bg-slate-900/40 p-3 rounded-xl border border-white/5">
+              <div className="space-y-1.5 text-xs text-slate-500 mb-6 bg-slate-50 p-3 rounded-xl border border-slate-200">
                 <div className="flex justify-between">
                   <span>Instructor:</span>
-                  <span className="text-slate-200 font-semibold">{sub.teacher}</span>
+                  <span className="text-slate-700 font-semibold">{sub.teacher}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Schedule:</span>
-                  <span className="text-slate-200 font-semibold">{sub.schedule}</span>
+                  <span className="text-slate-700 font-semibold">{sub.schedule}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Class Seats:</span>
-                  <span className="text-emerald-400 font-semibold">{sub.enrolledStudentsCount} Active Students</span>
+                  <span className="text-blue-600 font-semibold">{sub.enrolledStudentsCount} Active Students</span>
                 </div>
               </div>
 
@@ -149,8 +149,8 @@ export default function StudentSubjectsPage() {
                   onClick={() => handleToggleEnroll(sub)}
                   className={`w-full text-xs font-bold py-3 rounded-xl transition-all flex items-center justify-center gap-2 ${
                     isEnrolled
-                      ? "bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30"
-                      : "btn-emerald"
+                      ? "bg-red-50 text-red-700 border border-red-200 hover:bg-red-100"
+                      : "btn-blue"
                   }`}
                 >
                   {isEnrolled ? (
@@ -166,7 +166,7 @@ export default function StudentSubjectsPage() {
               ) : (
                 <button
                   disabled
-                  className="w-full text-xs font-bold py-3 rounded-xl bg-slate-900/80 border border-white/10 text-slate-500 cursor-not-allowed flex items-center justify-center gap-2"
+                  className="w-full text-xs font-bold py-3 rounded-xl bg-slate-100 border border-slate-200 text-slate-500 cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <span>🔒 Restricted to Grade {sub.grade} Students</span>
                 </button>

@@ -29,23 +29,23 @@ export default function AdminPaymentsPage() {
     <div className="space-y-6">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <span className="badge badge-amber mb-1">Receipt Verification</span>
-          <h1 className="text-2xl font-bold text-white">Payment Slip Approvals</h1>
-          <p className="text-xs text-slate-400">Review student uploaded bank slips and verify course enrollments.</p>
+          <h1 className="text-2xl font-bold text-slate-900">Payment Slip Approvals</h1>
+          <p className="text-xs text-slate-500">Review student uploaded bank slips and verify course enrollments.</p>
         </div>
 
         {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-900 border border-white/10">
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
           {["all", "Pending", "Approved", "Rejected"].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
               className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 statusFilter === st
-                  ? "bg-emerald-600 text-white shadow-md"
-                  : "text-slate-400 hover:text-white"
+                  ? "bg-blue-600 text-white shadow-md"
+                  : "text-slate-600 hover:text-slate-900"
               }`}
             >
               {st === "all" ? "All Payments" : st}
@@ -57,16 +57,16 @@ export default function AdminPaymentsPage() {
       {/* Payment Cards Grid */}
       <div className="grid md:grid-cols-2 gap-6">
         {filteredPayments.map((pay) => (
-          <div key={pay.id} className="glass-card p-6 rounded-2xl border border-white/10 flex flex-col justify-between">
+          <div key={pay.id} className="glass-card p-6 rounded-2xl border border-slate-200 flex flex-col justify-between">
             <div>
               <div className="flex items-center justify-between mb-3">
                 <span className="badge badge-brand">Grade {pay.grade}</span>
                 <span
                   className={`badge ${
                     pay.status === "Approved"
-                      ? "badge-emerald"
+                      ? "badge-blue"
                       : pay.status === "Rejected"
-                      ? "bg-red-500/20 text-red-300 border-red-500/30"
+                      ? "bg-red-50 text-red-700 border-red-200"
                       : "badge-amber"
                   }`}
                 >
@@ -74,21 +74,21 @@ export default function AdminPaymentsPage() {
                 </span>
               </div>
 
-              <h3 className="text-lg font-bold text-white mb-1">{pay.studentName}</h3>
-              <p className="text-xs text-slate-300 mb-1">{pay.studentEmail}</p>
-              <p className="text-xs text-brand-300 font-semibold mb-4">{pay.subjectTitle}</p>
+              <h3 className="text-lg font-bold text-slate-900 mb-1">{pay.studentName}</h3>
+              <p className="text-xs text-slate-600 mb-1">{pay.studentEmail}</p>
+              <p className="text-xs text-brand-600 font-semibold mb-4">{pay.subjectTitle}</p>
 
-              <div className="space-y-1.5 text-xs text-slate-400 bg-slate-900/40 p-3 rounded-xl border border-white/5 mb-4">
+              <div className="space-y-1.5 text-xs text-slate-500 bg-slate-50 p-3 rounded-xl border border-slate-200 mb-4">
                 <div className="flex justify-between">
                   <span>Amount Paid:</span>
-                  <span className="text-emerald-400 font-bold">LKR {pay.amount.toLocaleString()}</span>
+                  <span className="text-blue-600 font-bold">LKR {pay.amount.toLocaleString()}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Submitted At:</span>
-                  <span className="text-slate-300">{pay.submittedAt}</span>
+                  <span className="text-slate-700">{pay.submittedAt}</span>
                 </div>
                 {pay.notes && (
-                  <div className="pt-1.5 border-t border-white/10 text-[11px] text-slate-300 italic">
+                  <div className="pt-1.5 border-t border-slate-200 text-[11px] text-slate-600 italic">
                     Note: {pay.notes}
                   </div>
                 )}
@@ -107,13 +107,13 @@ export default function AdminPaymentsPage() {
                 <div className="grid grid-cols-2 gap-2">
                   <button
                     onClick={() => handleStatusChange(pay.id, "Approved")}
-                    className="btn-emerald text-xs py-2 justify-center"
+                    className="btn-blue text-xs py-2 justify-center"
                   >
                     ✓ Approve
                   </button>
                   <button
                     onClick={() => handleStatusChange(pay.id, "Rejected")}
-                    className="bg-red-500/20 text-red-300 border border-red-500/30 hover:bg-red-500/30 text-xs py-2 rounded-xl font-bold transition flex items-center justify-center"
+                    className="bg-red-50 text-red-700 border border-red-200 hover:bg-red-100 text-xs py-2 rounded-xl font-bold transition flex items-center justify-center"
                   >
                     ❌ Reject
                   </button>
@@ -127,25 +127,25 @@ export default function AdminPaymentsPage() {
       {/* Slip Image Lightbox Modal */}
       {activeSlipModal && (
         <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-6">
-          <div className="glass-panel p-6 rounded-3xl max-w-lg w-full border border-white/15 space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-white/10">
+          <div className="glass-panel p-6 rounded-3xl max-w-lg w-full border border-slate-200 space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-slate-200">
               <div>
-                <h3 className="font-bold text-white text-base">Payment Slip Receipt</h3>
-                <p className="text-xs text-slate-400">{activeSlipModal.studentName} • {activeSlipModal.subjectTitle}</p>
+                <h3 className="font-bold text-slate-900 text-base">Payment Slip Receipt</h3>
+                <p className="text-xs text-slate-500">{activeSlipModal.studentName} • {activeSlipModal.subjectTitle}</p>
               </div>
-              <button onClick={() => setActiveSlipModal(null)} className="text-slate-400 hover:text-white font-bold text-lg">
+              <button onClick={() => setActiveSlipModal(null)} className="text-slate-500 hover:text-slate-900 font-bold text-lg">
                 ✕
               </button>
             </div>
 
-            <div className="rounded-xl overflow-hidden bg-black border border-white/10 max-h-80 flex items-center justify-center">
+            <div className="rounded-xl overflow-hidden bg-white border border-slate-200 max-h-80 flex items-center justify-center">
               <img src={activeSlipModal.slipUrl} alt="Slip Receipt" className="max-h-80 object-contain w-full" />
             </div>
 
             <div className="flex justify-end gap-3 pt-2">
               <button
                 onClick={() => handleStatusChange(activeSlipModal.id, "Approved")}
-                className="btn-emerald text-xs py-2 px-4"
+                className="btn-blue text-xs py-2 px-4"
               >
                 ✓ Approve Payment Seat
               </button>

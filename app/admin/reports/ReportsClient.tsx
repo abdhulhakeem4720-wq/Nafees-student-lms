@@ -1,5 +1,3 @@
-"use client";
-
 function toCSV(rows: any[], columns: { key: string; label: string }[]) {
   const header = columns.map((c) => c.label).join(",");
   const body = rows
@@ -54,29 +52,29 @@ export default function ReportsClient({ registrations, payments }: { registratio
         </button>
       </div>
 
-      <h2 className="font-semibold mb-3">Registrations</h2>
+      <h2 className="font-semibold mb-3 text-slate-900">Registrations</h2>
       <table className="w-full text-sm bg-white border border-slate-200 rounded-xl overflow-hidden mb-8">
-        <thead className="bg-slate-100 text-left">
+        <thead className="bg-slate-50 text-left text-slate-600">
           <tr>{regColumns.map((c) => <th key={c.key} className="p-2">{c.label}</th>)}</tr>
         </thead>
         <tbody>
           {regRows.map((r, i) => (
-            <tr key={i} className="border-t">
-              {regColumns.map((c) => <td key={c.key} className="p-2">{(r as any)[c.key]}</td>)}
+            <tr key={i} className="border-t border-slate-200">
+              {regColumns.map((c) => <td key={c.key} className="p-2 text-slate-700">{(r as any)[c.key]}</td>)}
             </tr>
           ))}
         </tbody>
       </table>
 
-      <h2 className="font-semibold mb-3">Payments</h2>
+      <h2 className="font-semibold mb-3 text-slate-900">Payments</h2>
       <table className="w-full text-sm bg-white border border-slate-200 rounded-xl overflow-hidden">
-        <thead className="bg-slate-100 text-left">
+        <thead className="bg-slate-50 text-left text-slate-600">
           <tr>{payColumns.map((c) => <th key={c.key} className="p-2">{c.label}</th>)}</tr>
         </thead>
         <tbody>
           {payRows.map((r, i) => (
-            <tr key={i} className="border-t">
-              {payColumns.map((c) => <td key={c.key} className="p-2">{(r as any)[c.key]}</td>)}
+            <tr key={i} className="border-t border-slate-200">
+              {payColumns.map((c) => <td key={c.key} className="p-2 text-slate-700">{(r as any)[c.key]}</td>)}
             </tr>
           ))}
         </tbody>
