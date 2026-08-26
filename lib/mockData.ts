@@ -65,6 +65,7 @@ export interface UserProfile {
   grade: number;
   role: "student" | "admin";
   registeredSubjects: string[]; // subject IDs
+  password?: string;
 }
 
 export interface BroadcastMessage {

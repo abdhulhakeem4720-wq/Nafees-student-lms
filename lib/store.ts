@@ -19,7 +19,8 @@ export const MOCK_STUDENT_USER: UserProfile = {
   phone: "0771234567",
   grade: 9,
   role: "student",
-  registeredSubjects: ["sub-sci-9", "sub-math-9"]
+  registeredSubjects: ["sub-sci-9", "sub-math-9"],
+  password: "Student@123"
 };
 
 export const MOCK_ADMIN_USER: UserProfile = {
@@ -29,7 +30,8 @@ export const MOCK_ADMIN_USER: UserProfile = {
   phone: "0719876543",
   grade: 10,
   role: "admin",
-  registeredSubjects: []
+  registeredSubjects: [],
+  password: "Admin@123"
 };
 
 const STORAGE_KEYS = {
@@ -88,6 +90,55 @@ export const StudyStore = {
 
   logout(): void {
     this.setCurrentUser(null);
+  },
+
+  // Registered Users
+  getRegisteredUsers(): UserProfile[] {
+    return getStorageItem<UserProfile[]>(STORAGE_KEYS.USERS, []);
+  },
+
+  registerStudent(user: Omit<UserProfile, "id"> & { password: string }): UserProfile {
+    const users = this.getRegisteredUsers();
+    const exists = users.find((u) => u.email === user.email);
+    if (exists) {
+      throw new Error("Email already registered");
+    }
+    const newUser = { ...user, id: `stu-${Date.now()}` };
+    users.push(newUser);
+    setStorageItem(STORAGE_KEYS.USERS, users);
+    this.setCurrentUser(newUser);
+    return newUser;
+  },
+
+  validateCredentials(email: string, password: string): UserProfile | null {
+    const adminEmail = "Nafeesmohamed@gmail.com";
+    const adminPassword = "Nfsmhd@lms";
+
+    if (email === adminEmail && password === adminPassword) {
+      return {
+        id: "admin-1",
+        email: adminEmail,
+        fullName: "Nafees Mohamed (Academy Director)",
+        phone: "0710000000",
+        grade: 10,
+        role: "admin",
+        registeredSubjects: [],
+        password: adminPassword
+      };
+    }
+
+    const users = this.getRegisteredUsers();
+    const user = users.find((u) => u.email === email && u.password === password);
+    return user || null;
+  },
+
+  isStrongPassword(password: string): boolean {
+    if (password.length < 8) return false;
+    if (!/[A-Z]/.test(password)) return false;
+    if (!/[a-z]/.test(password)) return false;
+    if (!/[0-9]/.test(password)) return false;
+    if (!/[^A-Za-z0-9]/.test(password)) return false;
+    return true;
   },
 
   // Subjects

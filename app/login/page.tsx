@@ -60,20 +60,18 @@ export default function LoginPage() {
         }
       }
 
-      // Fallback mock login verification
-      if (email.toLowerCase().includes("admin") || portalType === "admin") {
-        StudyStore.loginDemo("admin");
-        router.push("/admin");
-      } else {
-        StudyStore.loginDemo("student");
-        router.push("/dashboard");
+      const user = StudyStore.validateCredentials(email, password);
+      if (user) {
+        StudyStore.setCurrentUser(user);
+        router.push(user.role === "admin" ? "/admin" : "/dashboard");
+        router.refresh();
+        return;
       }
-      router.refresh();
+
+      setError("Invalid email or password. Please try again.");
     } catch (err: any) {
-      console.warn("Login fallback executed:", err);
-      StudyStore.loginDemo(portalType);
-      router.push(portalType === "admin" ? "/admin" : "/dashboard");
-      router.refresh();
+      console.warn("Login error:", err);
+      setError("Invalid email or password. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -217,7 +215,7 @@ export default function LoginPage() {
                 <input
                   type="email"
                   required
-                  placeholder={portalType === "admin" ? "admin@study.edu" : "student@study.edu"}
+                  placeholder={portalType === "admin" ? "Nafeesmohamed@gmail.com" : "student@study.edu"}
                   className="glass-input w-full"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -237,7 +235,7 @@ export default function LoginPage() {
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs flex items-center gap-2">
+                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
                   <span>⚠️</span>
                   <span>{error}</span>
                 </div>

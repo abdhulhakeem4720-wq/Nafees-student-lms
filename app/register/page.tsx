@@ -36,6 +36,12 @@ export default function RegisterPage() {
     setError(null);
     setLoading(true);
 
+    if (!StudyStore.isStrongPassword(password)) {
+      setError("Password must be at least 8 characters with uppercase, lowercase, number, and special character.");
+      setLoading(false);
+      return;
+    }
+
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       if (supabaseUrl && !supabaseUrl.includes("your-project.supabase.co")) {
@@ -54,20 +60,16 @@ export default function RegisterPage() {
         }
       }
 
-      // Save user to study store (role is strictly 'student')
-      const newUser = {
-        id: `stu-${Date.now()}`,
+      const newUser = StudyStore.registerStudent({
         email,
         fullName,
         phone,
         grade,
-        role: "student" as const,
-        registeredSubjects: [`sub-sci-${grade}`, `sub-math-${grade}`]
-      };
+        role: "student",
+        registeredSubjects: [`sub-sci-${grade}`, `sub-math-${grade}`],
+        password
+      });
 
-      StudyStore.setCurrentUser(newUser);
-
-      // Trigger automatic email alert to abdhulhakeem4720@gmail.com
       await notifyAdminOfRegistration({ fullName, email, phone, grade });
 
       setTimeout(() => {
@@ -75,19 +77,7 @@ export default function RegisterPage() {
         router.refresh();
       }, 400);
     } catch (err: any) {
-      console.warn("Register fallback executed:", err);
-      StudyStore.setCurrentUser({
-        id: `stu-${Date.now()}`,
-        email: email || "newstudent@study.edu",
-        fullName: fullName || "New Student",
-        phone: phone || "0770000000",
-        grade,
-        role: "student",
-        registeredSubjects: [`sub-sci-${grade}`, `sub-math-${grade}`]
-      });
-      await notifyAdminOfRegistration({ fullName: fullName || "New Student", email, phone, grade });
-      router.push("/dashboard");
-      router.refresh();
+      setError(err.message || "Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -178,20 +168,21 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="label">Password (Minimum 6 characters)</label>
+            <label className="label">Password</label>
             <input
               type="password"
               required
-              minLength={6}
-              placeholder="••••••••"
+              minLength={8}
+              placeholder="Min 8 chars, uppercase, lowercase, number, special char"
               className="glass-input w-full"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
             />
+            <p className="text-[10px] text-slate-400 mt-1">Must include uppercase, lowercase, number, and special character.</p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs">
+            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
               ⚠️ {error}
             </div>
           )}
