@@ -36,7 +36,7 @@ export default function Logo({ size = "md", href = "/", showSubtitle = true }: L
         </span>
         {showSubtitle && (
           <span className="block text-[10px] text-blue-600 font-bold uppercase tracking-wider">
-            Science & Mathematics • Grades 6–10
+            Science & Mathematics • Grades 6–11
           </span>
         )}
       </div>

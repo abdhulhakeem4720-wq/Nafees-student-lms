@@ -99,7 +99,7 @@ export default function StudentLoginPage() {
               Student Learning Hub
             </h1>
             <p className="text-slate-600 text-xs leading-relaxed mb-6">
-              Access your Grade 6–10 Science and Mathematics subjects, view lecture materials, complete online quizzes, and track slip approvals.
+              Access your Grade 6–11 Science and Mathematics subjects, view lecture materials, complete online quizzes, and track slip approvals.
             </p>
 
             <div className="space-y-3">

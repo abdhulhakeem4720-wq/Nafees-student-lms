@@ -80,12 +80,13 @@ export default function StudentMaterialsPage() {
               onChange={(e) => setSelectedGradeFilter(e.target.value)}
               className="glass-input w-full bg-white"
             >
-              <option value="all">All Grades (6–10)</option>
+              <option value="all">All Grades (6–11)</option>
               <option value="6">Grade 6</option>
               <option value="7">Grade 7</option>
               <option value="8">Grade 8</option>
               <option value="9">Grade 9</option>
               <option value="10">Grade 10</option>
+              <option value="11">Grade 11</option>
             </select>
           </div>
 

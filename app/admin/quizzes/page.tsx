@@ -79,7 +79,7 @@ export default function AdminQuizzesPage() {
       <div className="p-6 rounded-2xl glass-card border border-slate-200">
         <span className="badge badge-blue mb-1">Exam Builder Studio</span>
         <h1 className="text-2xl font-bold text-slate-900">Create & Manage Online Quizzes</h1>
-        <p className="text-xs text-slate-500">Design timed multiple-choice online exams for Grade 6 to 10 Science & Mathematics.</p>
+        <p className="text-xs text-slate-500">Design timed multiple-choice online exams for Grade 6 to 11 Science & Mathematics.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">

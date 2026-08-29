@@ -51,8 +51,8 @@ export default function StudentSubjectsPage() {
         </div>
 
         {/* Grade Selector Tabs */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
-          {[6, 7, 8, 9, 10].map((g) => {
+        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200 flex-wrap">
+          {[6, 7, 8, 9, 10, 11].map((g) => {
             const isUserGrade = user?.grade === g;
             return (
               <button

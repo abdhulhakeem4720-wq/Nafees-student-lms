@@ -32,7 +32,8 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
     { label: "My Subjects", href: "/dashboard/subjects", icon: "📚" },
     { label: "Study Materials", href: "/dashboard/materials", icon: "🔍" },
     { label: "Online Quizzes", href: "/dashboard/quiz", icon: "⏱️" },
-    { label: "Payment Verification", href: "/dashboard/payment", icon: "💳" }
+    { label: "Payment Verification", href: "/dashboard/payment", icon: "💳" },
+    { label: "About Us", href: "/about", icon: "ℹ️" }
   ];
 
   return (

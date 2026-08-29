@@ -106,7 +106,7 @@ export default function AdminMaterialsPage() {
       <div className="p-6 rounded-2xl glass-card border border-slate-200">
         <span className="badge badge-brand mb-1">Study Content Management</span>
         <h1 className="text-2xl font-bold text-slate-900">Upload Study Notes & Documents</h1>
-        <p className="text-xs text-slate-500">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–10 students.</p>
+        <p className="text-xs text-slate-500">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–11 students.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">

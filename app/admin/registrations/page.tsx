@@ -29,7 +29,7 @@ export default function AdminRegistrationsPage() {
         <div>
           <span className="badge badge-brand mb-1">Student Directory</span>
           <h1 className="text-2xl font-bold text-slate-900">Student Registrations</h1>
-          <p className="text-xs text-slate-500">View and manage enrolled students across Grades 6–10.</p>
+          <p className="text-xs text-slate-500">View and manage enrolled students across Grades 6–11.</p>
         </div>
         <span className="badge badge-blue">{filteredStudents.length} Students Listed</span>
       </div>
@@ -52,12 +52,13 @@ export default function AdminRegistrationsPage() {
             onChange={(e) => setGradeFilter(e.target.value)}
             className="glass-input w-full bg-white"
           >
-            <option value="all">All Grades (6–10)</option>
+            <option value="all">All Grades (6–11)</option>
             <option value="6">Grade 6</option>
             <option value="7">Grade 7</option>
             <option value="8">Grade 8</option>
             <option value="9">Grade 9</option>
             <option value="10">Grade 10</option>
+            <option value="11">Grade 11</option>
           </select>
         </div>
       </div>

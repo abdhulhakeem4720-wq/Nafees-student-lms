@@ -35,7 +35,7 @@ export default function AdminOverviewPage() {
             Academy Control Center
           </h1>
           <p className="text-blue-100 text-sm leading-relaxed mb-6">
-            Manage Grade 6–10 registrations, verify student payment receipts, manage study notes & quizzes, and broadcast batch updates.
+            Manage Grade 6–11 registrations, verify student payment receipts, manage study notes & quizzes, and broadcast batch updates.
           </p>
 
           <div className="flex flex-wrap gap-3">

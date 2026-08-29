@@ -188,6 +188,28 @@ export const INITIAL_SUBJECTS: SubjectItem[] = [
     teacher: "Prof. K. Liyanage",
     schedule: "Every Thursday 4:00 PM - 7:00 PM",
     enrolledStudentsCount: 125
+  },
+  {
+    id: "sub-sci-11",
+    code: "SCI-11",
+    title: "Grade 11 Advanced Science & O/L Final Revision",
+    grade: 11,
+    category: "Science",
+    description: "Advanced O/L syllabus mastery, intensive paper drills, lab experiments, and model exam preparation.",
+    teacher: "Nafees Mohamed & Team",
+    schedule: "Every Friday 4:00 PM - 7:00 PM",
+    enrolledStudentsCount: 140
+  },
+  {
+    id: "sub-math-11",
+    code: "MATH-11",
+    title: "Grade 11 Higher Pure & Applied Mathematics",
+    grade: 11,
+    category: "Mathematics",
+    description: "Advanced Algebra, Coordinate Geometry, Trigonometric Identities, Statistics, and O/L Target Papers.",
+    teacher: "Nafees Mohamed",
+    schedule: "Every Saturday 5:00 PM - 8:00 PM",
+    enrolledStudentsCount: 155
   }
 ];
 
@@ -256,6 +278,19 @@ export const INITIAL_MATERIALS: MaterialItem[] = [
     fileSize: "1.8 MB",
     downloads: 87,
     uploadedAt: "2026-08-12"
+  },
+  {
+    id: "mat-6",
+    title: "Grade 11 Final O/L Target Paper & Answer Analysis",
+    subjectId: "sub-sci-11",
+    subjectTitle: "Grade 11 Advanced Science & O/L Final Revision",
+    grade: 11,
+    category: "Science",
+    type: "PDF Note",
+    fileUrl: "#",
+    fileSize: "4.5 MB",
+    downloads: 412,
+    uploadedAt: "2026-08-20"
   }
 ];
 
@@ -379,3 +414,133 @@ export const INITIAL_MESSAGES: BroadcastMessage[] = [
     recipientCount: 84
   }
 ];
+
+// About Us Interfaces & Initial Seed Data
+export interface AboutSirDetails {
+  fullName: string;
+  title: string;
+  photoUrl: string;
+  bio: string;
+  qualifications: string[];
+  experienceYears: number;
+  email: string;
+  phone: string;
+  location: string;
+  teachingPhilosophy: string;
+}
+
+export interface PortfolioItem {
+  id: string;
+  title: string;
+  category: string; // e.g. "Achievement", "Methodology", "Milestone", "Publication"
+  description: string;
+  year: string;
+  icon: string;
+}
+
+export interface SirArticle {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  category: string;
+  publishedDate: string;
+  readTime: string;
+  imageUrl?: string;
+  author: string;
+}
+
+export const INITIAL_ABOUT_SIR: AboutSirDetails = {
+  fullName: "Sir Nafees Mohamed",
+  title: "Founder & Lead Educator - Science & Mathematics Specialist",
+  photoUrl: "/nafees-logo.jpg",
+  bio: "Sir Nafees Mohamed is a passionate Science and Mathematics educator with over 10 years of experience shaping thousands of students towards academic excellence in O/L and secondary education. His structured problem-solving approach and interactive digital learning tools empower students across Grades 6 to 11 to achieve top distinction grades.",
+  qualifications: [
+    "B.Sc. Special (Hons) in Physical Sciences",
+    "Postgraduate Diploma in Education (PGDE)",
+    "Senior Science & Mathematics Curriculum Specialist",
+    "Certified STEM Educator & Digital Learning Innovator"
+  ],
+  experienceYears: 10,
+  email: "nfsmhdlms@gmail.com",
+  phone: "+94 71 987 6543",
+  location: "Colombo / Islandwide Online Portal",
+  teachingPhilosophy: "Education should spark curiosity, foster deep conceptual understanding, and instill confidence. Every student can master Science and Mathematics with the right guidance, clear structure, and continuous support."
+};
+
+export const INITIAL_PORTFOLIOS: PortfolioItem[] = [
+  {
+    id: "port-1",
+    title: "1,250+ Distinctions Achieved",
+    category: "Milestone",
+    description: "Over 1,250 students guided to A and B grades in G.C.E. O/L Science and Mathematics examinations.",
+    year: "2016 - 2026",
+    icon: "🏆"
+  },
+  {
+    id: "port-2",
+    title: "Interactive Digital LMS",
+    category: "Methodology",
+    description: "Pioneered a dedicated online portal with instant slip verification, structured PDF notes, and automated quizzes for Grades 6-11.",
+    year: "2024",
+    icon: "💻"
+  },
+  {
+    id: "port-3",
+    title: "Grade 6 to 11 Syllabus Mastery",
+    category: "Curriculum",
+    description: "Comprehensive module design covering core Physics, Organic Chemistry, Genetics, Algebra, Geometry, and Trigonometry.",
+    year: "Ongoing",
+    icon: "📚"
+  },
+  {
+    id: "port-4",
+    title: "Excellence in Pedagogy Award",
+    category: "Achievement",
+    description: "Recognized for innovative teaching techniques in simplifying complex mathematical proofs and physical sciences concepts.",
+    year: "2023",
+    icon: "🎖️"
+  }
+];
+
+export const INITIAL_ARTICLES: SirArticle[] = [
+  {
+    id: "art-1",
+    title: "Mastering O/L Mathematics: 5 Essential Strategies by Sir Nafees",
+    excerpt: "Discover how breaking down quadratic equations, geometry theorems, and time-management strategies can transform your O/L maths result.",
+    content: `Mathematics is often perceived as a daunting subject, but it is fundamentally a language of patterns and logic. Sir Nafees Mohamed shares five proven strategies that have helped hundreds of students convert their fear into distinctions:
+
+1. **Deconstruct the Theory First**: Never attempt past paper questions before fully understanding the underlying theorem. Whether it's Pythagoras' Theorem or Quadratic Equations, internalize *why* the formula works.
+
+2. **Daily Problem Solving Routine**: Dedicate at least 30 minutes daily to solving 3-5 multi-step questions. Consistency builds pattern recognition.
+
+3. **Maintain an Error Logbook**: Whenever you get a question wrong during revision, write down the exact step where you made the miscalculation and re-solve it.
+
+4. **Time Management in Paper II**: Practice structured 3-hour mock papers under exam conditions. Allocate specific time limits per section.
+
+5. **Visual Diagrams in Geometry**: Always redraw geometry diagrams clearly with angle annotations. Seeing the shape clearly is half the solution.`,
+    category: "Exam Guidance",
+    publishedDate: "2026-08-15",
+    readTime: "4 min read",
+    author: "Sir Nafees Mohamed",
+    imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?w=800&auto=format&fit=crop&q=80"
+  },
+  {
+    id: "art-2",
+    title: "Why Grade 11 Science Revision Requires a Dual Approach",
+    excerpt: "Blending conceptual theory revision with timed target papers is the secret to scoring A grades in O/L Science.",
+    content: `As Grade 11 students prepare for their final Ordinary Level examinations, the key to top performance lies in balancing Physics, Chemistry, and Biology seamlessly.
+
+In Sir Nafees's Grade 11 Advanced Revision Module, students undergo a dual-phase training:
+- **Phase 1: Conceptual Reinforcement**: Revisiting core concepts in Electromagnetism, Chemical Reactions, and Human Body Physiology using structured visual summaries.
+- **Phase 2: Target Paper Drills**: Analyzing past 10 years' scheme marking logic so students know exactly how examiners evaluate structured essay answers.
+
+With dedicated weekly support and model exam papers, Grade 11 students enter their exams with complete readiness and confidence.`,
+    category: "Science Insights",
+    publishedDate: "2026-08-20",
+    readTime: "5 min read",
+    author: "Sir Nafees Mohamed",
+    imageUrl: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?w=800&auto=format&fit=crop&q=80"
+  }
+];
+

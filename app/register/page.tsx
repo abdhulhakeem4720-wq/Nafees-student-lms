@@ -101,7 +101,7 @@ export default function RegisterPage() {
             <Logo size="md" href="/" />
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Create Your Student Account</h1>
-          <p className="text-slate-500 text-xs mt-1">Enroll for Science & Mathematics (Grades 6–10)</p>
+          <p className="text-slate-500 text-xs mt-1">Enroll for Science & Mathematics (Grades 6–11)</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -146,8 +146,8 @@ export default function RegisterPage() {
           {/* Grade Selector Pills */}
           <div>
             <label className="label">Select Grade Level</label>
-            <div className="grid grid-cols-5 gap-2">
-              {[6, 7, 8, 9, 10].map((g) => (
+            <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
+              {[6, 7, 8, 9, 10, 11].map((g) => (
                 <button
                   key={g}
                   type="button"

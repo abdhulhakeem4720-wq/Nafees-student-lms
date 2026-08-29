@@ -30,6 +30,9 @@ export default function HomePage() {
           <Logo size="md" href="/" />
 
           <nav className="flex items-center gap-3">
+            <Link href="/about" className="text-xs font-bold text-slate-700 hover:text-blue-600 px-3 py-2 rounded-lg hover:bg-blue-50 transition">
+              ℹ️ About Us
+            </Link>
             <button
               onClick={() => handleQuickDemo("student")}
               className="hidden sm:flex btn-blue text-xs py-2 px-3"
@@ -61,11 +64,14 @@ export default function HomePage() {
         </h1>
 
         <p className="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto mb-10 leading-relaxed">
-          Comprehensive online learning platform for Grades 6 to 10. Access structured syllabus notes, interactive video guides, automated online quizzes, and direct payment slip verification.
+          Comprehensive online learning platform for Grades 6 to 11. Access structured syllabus notes, interactive video guides, automated online quizzes, and direct payment slip verification.
         </p>
 
         {/* Action Buttons */}
         <div className="flex flex-wrap justify-center gap-4 mb-16">
+          <Link href="/about" className="btn-secondary text-base py-3.5 px-6">
+            ℹ️ About Sir & Academy
+          </Link>
           <Link href="/login" className="btn-blue text-base py-3.5 px-8">
             🎓 Student Portal
           </Link>
@@ -84,7 +90,7 @@ export default function HomePage() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
           {[
             { metric: "1,250+", label: "Enrolled Students", icon: "👨‍🎓" },
-            { metric: "10 Core", label: "Science & Maths Subjects", icon: "📚" },
+            { metric: "12 Core", label: "Science & Maths Subjects", icon: "📚" },
             { metric: "98.4%", label: "O/L Exam Pass Rate", icon: "🏆" },
             { metric: "100%", label: "Verified Seat Management", icon: "✅" }
           ].map((stat, idx) => (
@@ -105,8 +111,8 @@ export default function HomePage() {
           <p className="text-slate-500 text-sm mt-1">Select a grade to preview available Science and Mathematics courses.</p>
 
           {/* Grade Selector Tabs */}
-          <div className="flex justify-center gap-2 mt-6">
-            {[6, 7, 8, 9, 10].map((g) => (
+          <div className="flex justify-center gap-2 mt-6 flex-wrap">
+            {[6, 7, 8, 9, 10, 11].map((g) => (
               <button
                 key={g}
                 onClick={() => setSelectedGrade(g)}
@@ -166,7 +172,7 @@ export default function HomePage() {
             {
               title: "1. Subject Registration",
               icon: "📝",
-              desc: "Register for Grade 6–10 Science and Mathematics. Immediate access to your syllabus and course materials."
+              desc: "Register for Grade 6–11 Science and Mathematics. Immediate access to your syllabus and course materials."
             },
             {
               title: "2. Search Study Materials",
@@ -186,7 +192,7 @@ export default function HomePage() {
             {
               title: "5. Batch Email Broadcasts",
               icon: "📢",
-              desc: "Admins send targeted announcements to specific grades (e.g. Grade 9 Science) or individual subjects."
+              desc: "Admins send targeted announcements to specific grades (e.g. Grade 11 Science) or individual subjects."
             },
             {
               title: "6. Printable Reports & Analytics",
@@ -207,8 +213,10 @@ export default function HomePage() {
       <footer className="border-t border-slate-200 bg-white py-10 px-6 relative z-10 text-xs text-slate-500">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <Logo size="sm" href="/" />
-          <div>
-            Science & Mathematics Education Platform • Grades 6 to 10
+          <div className="flex items-center gap-4">
+            <Link href="/about" className="hover:text-blue-600 font-semibold">About Us</Link>
+            <span>•</span>
+            <span>Science & Mathematics Education Platform • Grades 6 to 11</span>
           </div>
         </div>
       </footer>

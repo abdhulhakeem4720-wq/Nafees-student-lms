@@ -15,7 +15,7 @@ create table if not exists profiles (
   full_name text not null,
   email text not null,
   phone text,
-  grade int check (grade between 6 and 10),   -- nullable for admins
+  grade int check (grade between 6 and 11),   -- nullable for admins
   role user_role not null default 'student',
   created_at timestamptz not null default now()
 );
@@ -54,7 +54,7 @@ create type subject_category as enum ('science', 'maths');
 create table if not exists subjects (
   id uuid primary key default uuid_generate_v4(),
   name text not null,
-  grade int not null check (grade between 6 and 10),
+  grade int not null check (grade between 6 and 11),
   category subject_category not null,
   fee numeric(10,2) not null default 0,
   created_at timestamptz not null default now(),
@@ -114,7 +114,7 @@ create index if not exists materials_title_search_idx
 create table if not exists quizzes (
   id uuid primary key default uuid_generate_v4(),
   subject_id uuid not null references subjects(id) on delete cascade,
-  grade int not null check (grade between 6 and 10),
+  grade int not null check (grade between 6 and 11),
   title text not null,
   created_at timestamptz not null default now()
 );
@@ -264,7 +264,7 @@ create policy "materials: admin upload"
   on storage.objects for insert with check (bucket_id = 'materials' and is_admin());
 
 -- =====================================================================
--- SEED DATA — Science & Maths subjects for grades 6-10
+-- SEED DATA — Science & Maths subjects for grades 6-11
 -- =====================================================================
 insert into subjects (name, grade, category, fee) values
   ('Science', 6, 'science', 2000),
@@ -276,7 +276,9 @@ insert into subjects (name, grade, category, fee) values
   ('Science', 9, 'science', 2500),
   ('Mathematics', 9, 'maths', 2500),
   ('Science', 10, 'science', 3000),
-  ('Mathematics', 10, 'maths', 3000)
+  ('Mathematics', 10, 'maths', 3000),
+  ('Science', 11, 'science', 3500),
+  ('Mathematics', 11, 'maths', 3500)
 on conflict (name, grade) do nothing;
 
 -- =====================================================================

@@ -70,6 +70,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   const navItems = [
     { label: "Admin Overview", href: "/admin", icon: "📈" },
+    { label: "About Us Management", href: "/admin/about", icon: "ℹ️" },
     { label: "Student Registrations", href: "/admin/registrations", icon: "👨‍🎓" },
     { label: "Payment Verification", href: "/admin/payments", icon: "💳" },
     { label: "Study Materials Studio", href: "/admin/materials", icon: "📂" },

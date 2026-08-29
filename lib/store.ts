@@ -5,11 +5,17 @@ import {
   PaymentItem,
   UserProfile,
   BroadcastMessage,
+  AboutSirDetails,
+  PortfolioItem,
+  SirArticle,
   INITIAL_SUBJECTS,
   INITIAL_MATERIALS,
   INITIAL_QUIZZES,
   INITIAL_PAYMENTS,
-  INITIAL_MESSAGES
+  INITIAL_MESSAGES,
+  INITIAL_ABOUT_SIR,
+  INITIAL_PORTFOLIOS,
+  INITIAL_ARTICLES
 } from "./mockData";
 
 export const MOCK_STUDENT_USER: UserProfile = {
@@ -41,7 +47,10 @@ const STORAGE_KEYS = {
   QUIZZES: "study_hub_quizzes",
   PAYMENTS: "study_hub_payments",
   MESSAGES: "study_hub_messages",
-  USERS: "study_hub_users"
+  USERS: "study_hub_users",
+  ABOUT_DETAILS: "study_hub_about_details",
+  PORTFOLIOS: "study_hub_portfolios",
+  ARTICLES: "study_hub_articles"
 };
 
 function getStorageItem<T>(key: string, defaultValue: T): T {
@@ -279,5 +288,73 @@ export const StudyStore = {
     };
     setStorageItem(STORAGE_KEYS.MESSAGES, [newMsg, ...list]);
     return newMsg;
+  },
+
+  // About Sir Details
+  getAboutDetails(): AboutSirDetails {
+    return getStorageItem<AboutSirDetails>(STORAGE_KEYS.ABOUT_DETAILS, INITIAL_ABOUT_SIR);
+  },
+
+  updateAboutDetails(details: AboutSirDetails): AboutSirDetails {
+    setStorageItem(STORAGE_KEYS.ABOUT_DETAILS, details);
+    return details;
+  },
+
+  // Portfolio Items
+  getPortfolios(): PortfolioItem[] {
+    return getStorageItem<PortfolioItem[]>(STORAGE_KEYS.PORTFOLIOS, INITIAL_PORTFOLIOS);
+  },
+
+  addPortfolio(item: Omit<PortfolioItem, "id">): PortfolioItem {
+    const list = this.getPortfolios();
+    const newItem: PortfolioItem = {
+      ...item,
+      id: `port-${Date.now()}`
+    };
+    setStorageItem(STORAGE_KEYS.PORTFOLIOS, [...list, newItem]);
+    return newItem;
+  },
+
+  updatePortfolio(id: string, updated: Partial<PortfolioItem>): PortfolioItem[] {
+    const list = this.getPortfolios().map((item) =>
+      item.id === id ? { ...item, ...updated } : item
+    );
+    setStorageItem(STORAGE_KEYS.PORTFOLIOS, list);
+    return list;
+  },
+
+  deletePortfolio(id: string): void {
+    const list = this.getPortfolios().filter((item) => item.id !== id);
+    setStorageItem(STORAGE_KEYS.PORTFOLIOS, list);
+  },
+
+  // Articles & News about Sir
+  getArticles(): SirArticle[] {
+    return getStorageItem<SirArticle[]>(STORAGE_KEYS.ARTICLES, INITIAL_ARTICLES);
+  },
+
+  addArticle(article: Omit<SirArticle, "id" | "publishedDate">): SirArticle {
+    const list = this.getArticles();
+    const newArticle: SirArticle = {
+      ...article,
+      id: `art-${Date.now()}`,
+      publishedDate: new Date().toISOString().split("T")[0]
+    };
+    setStorageItem(STORAGE_KEYS.ARTICLES, [newArticle, ...list]);
+    return newArticle;
+  },
+
+  updateArticle(id: string, updated: Partial<SirArticle>): SirArticle[] {
+    const list = this.getArticles().map((article) =>
+      article.id === id ? { ...article, ...updated } : article
+    );
+    setStorageItem(STORAGE_KEYS.ARTICLES, list);
+    return list;
+  },
+
+  deleteArticle(id: string): void {
+    const list = this.getArticles().filter((article) => article.id !== id);
+    setStorageItem(STORAGE_KEYS.ARTICLES, list);
   }
 };
+

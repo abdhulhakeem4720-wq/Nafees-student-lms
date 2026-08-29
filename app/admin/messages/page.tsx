@@ -49,7 +49,7 @@ export default function AdminMessagesPage() {
       <div className="p-6 rounded-2xl glass-card border border-slate-200">
         <span className="badge badge-blue mb-1">Batch Communications</span>
         <h1 className="text-2xl font-bold text-slate-900">Send Batch Announcements & Emails</h1>
-        <p className="text-xs text-slate-500">Broadcast updates, exam alerts, or payment reminders separately by Grade (6–10) or Subject.</p>
+        <p className="text-xs text-slate-500">Broadcast updates, exam alerts, or payment reminders separately by Grade (6–11) or Subject.</p>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
@@ -67,12 +67,13 @@ export default function AdminMessagesPage() {
                   onChange={(e) => setTargetGrade(e.target.value)}
                   className="glass-input w-full bg-white"
                 >
-                  <option value="All">All Grades (6–10)</option>
+                  <option value="All">All Grades (6–11)</option>
                   <option value="6">Grade 6 Only</option>
                   <option value="7">Grade 7 Only</option>
                   <option value="8">Grade 8 Only</option>
                   <option value="9">Grade 9 Only</option>
                   <option value="10">Grade 10 Only</option>
+                  <option value="11">Grade 11 Only</option>
                 </select>
               </div>
 
