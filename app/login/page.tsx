@@ -7,23 +7,21 @@ import { createClient } from "@/lib/supabase/client";
 import { StudyStore } from "@/lib/store";
 import Logo from "@/components/Logo";
 
-export default function LoginPage() {
+export default function StudentLoginPage() {
   const router = useRouter();
   const supabase = createClient();
 
-  const [portalType, setPortalType] = useState<"student" | "admin">("student");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  function handleDemoLogin(role: "student" | "admin") {
+  function handleDemoStudentLogin() {
     setLoading(true);
     setError(null);
     setTimeout(() => {
-      StudyStore.loginDemo(role);
-      router.push(role === "admin" ? "/admin" : "/dashboard");
-      router.refresh();
+      StudyStore.loginDemo("student");
+      window.location.href = "/dashboard";
     }, 400);
   }
 
@@ -31,6 +29,12 @@ export default function LoginPage() {
     e.preventDefault();
     setError(null);
     setLoading(true);
+
+    if (email.trim().toLowerCase() === "nfsmhdlms@gmail.com") {
+      setError("This login is for Students only. Please use the Admin Portal link in the top menu to log in as Administrator.");
+      setLoading(false);
+      return;
+    }
 
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -43,35 +47,38 @@ export default function LoginPage() {
             .eq("id", data.user.id)
             .single();
 
-          const targetRole = profile?.role === "admin" ? "admin" : "student";
+          if (profile?.role === "admin") {
+            setError("Administrator accounts cannot log in through the Student Portal. Please use the Admin Portal.");
+            setLoading(false);
+            return;
+          }
+
           StudyStore.setCurrentUser({
             id: data.user.id,
             email: data.user.email || email,
-            fullName: data.user.user_metadata?.full_name || "Registered User",
+            fullName: data.user.user_metadata?.full_name || "Registered Student",
             phone: data.user.user_metadata?.phone || "",
             grade: Number(data.user.user_metadata?.grade || 9),
-            role: targetRole,
+            role: "student",
             registeredSubjects: []
           });
 
-          router.push(targetRole === "admin" ? "/admin" : "/dashboard");
-          router.refresh();
+          window.location.href = "/dashboard";
           return;
         }
       }
 
-      const user = StudyStore.validateCredentials(email, password);
-      if (user) {
-        StudyStore.setCurrentUser(user);
-        router.push(user.role === "admin" ? "/admin" : "/dashboard");
-        router.refresh();
+      const studentUser = StudyStore.validateStudentCredentials(email, password);
+      if (studentUser) {
+        StudyStore.setCurrentUser(studentUser);
+        window.location.href = "/dashboard";
         return;
       }
 
-      setError("Invalid email or password. Please try again.");
+      setError("Invalid student email or password. Please check your credentials or register.");
     } catch (err: any) {
       console.warn("Login error:", err);
-      setError("Invalid email or password. Please try again.");
+      setError("Invalid credentials. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -79,28 +86,22 @@ export default function LoginPage() {
 
   return (
     <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
-      {/* Background Floating Study Aesthetics */}
-      <div className="absolute top-12 left-12 w-72 h-72 bg-blue-500/10 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
-      <div className="absolute bottom-12 right-12 w-80 h-80 bg-blue-400/10 rounded-full blur-3xl pointer-events-none animate-pulse-slow"></div>
-
       <div className="w-full max-w-4xl grid md:grid-cols-12 rounded-3xl overflow-hidden glass-panel shadow-2xl border border-slate-200 relative z-10">
         
-        {/* Left Side: Creative Study Hub Info & Quote */}
+        {/* Left Side: Study Hub Info */}
         <div className="md:col-span-5 p-8 bg-gradient-to-br from-blue-500/10 via-white to-blue-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between relative overflow-hidden">
-          
           <div>
             <div className="mb-6">
               <Logo size="lg" href="/" />
             </div>
 
             <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
-              Master Science & Mathematics
+              Student Learning Hub
             </h1>
             <p className="text-slate-600 text-xs leading-relaxed mb-6">
-              Join Sri Lanka's premier digital learning platform with Nafees. Access interactive study guides, live video notes, instant online quizzes, and direct payment slip submission.
+              Access your Grade 6–10 Science and Mathematics subjects, view lecture materials, complete online quizzes, and track slip approvals.
             </p>
 
-            {/* Creative Study Features */}
             <div className="space-y-3">
               {[
                 { icon: "⚛️", text: "Interactive Science & Physics Labs" },
@@ -116,7 +117,6 @@ export default function LoginPage() {
             </div>
           </div>
 
-          {/* Motivational Footer */}
           <div className="mt-8 pt-6 border-t border-slate-200">
             <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 italic">
               "Education is the most powerful weapon which you can use to change the world."
@@ -125,97 +125,50 @@ export default function LoginPage() {
           </div>
         </div>
 
-        {/* Right Side: Creative Login Form & Quick Demo */}
+        {/* Right Side: Student Login Form */}
         <div className="md:col-span-7 p-8 flex flex-col justify-between">
           <div>
-            {/* Header Nav link */}
             <div className="flex items-center justify-between mb-6">
               <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 transition flex items-center gap-1">
                 ← Back to Home
               </Link>
-              <span className="text-xs text-slate-500">
-                New student?{" "}
-                <Link href="/register" className="text-brand-600 font-semibold hover:underline">
-                  Register here
-                </Link>
-              </span>
+              <Link href="/admin/login" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
+                🛡️ Admin Portal
+              </Link>
             </div>
 
-            <h2 className="text-2xl font-bold text-slate-900 mb-2">Welcome Back</h2>
-            <p className="text-xs text-slate-500 mb-6">Select your portal or use 1-click quick demo access.</p>
-
-            {/* Portal Tabs */}
-            <div className="grid grid-cols-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200 mb-6">
-              <button
-                type="button"
-                onClick={() => { setPortalType("student"); setError(null); }}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                  portalType === "student"
-                    ? "bg-brand-600 text-white shadow-lg shadow-brand-500/25"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <span>🎓 Student Portal</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => { setPortalType("admin"); setError(null); }}
-                className={`py-2.5 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                  portalType === "admin"
-                    ? "bg-blue-600 text-white shadow-lg shadow-blue-500/25"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                <span>🛡️ Admin Portal</span>
-              </button>
+            <div className="mb-6">
+              <span className="badge badge-blue mb-2">Student Access</span>
+              <h2 className="text-2xl font-bold text-slate-900">Student Sign In</h2>
+              <p className="text-xs text-slate-500 mt-1">Enter your student account details to access your courses.</p>
             </div>
 
-            {/* 1-CLICK QUICK DEMO LOGIN BOX */}
-            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-400/10 border border-blue-500/20 relative">
+            {/* Quick Demo Button */}
+            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-400/10 border border-blue-500/20">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-                  Instant 1-Click Demo Login
+                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
+                  ⚡ 1-Click Student Demo
                 </span>
-                <span className="text-[10px] text-slate-500">No password needed</span>
+                <span className="text-[10px] text-slate-500">Grade 9 Demo</span>
               </div>
-              
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-3">
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("student")}
-                  disabled={loading}
-                  className="btn-blue text-xs py-2.5 w-full"
-                >
-                  <span>🎓 Demo Grade 9 Student</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => handleDemoLogin("admin")}
-                  disabled={loading}
-                  className="btn-primary text-xs py-2.5 w-full"
-                >
-                  <span>🛡️ Demo Admin / Director</span>
-                </button>
-              </div>
-            </div>
-
-            {/* Divider */}
-            <div className="relative flex items-center justify-center my-6">
-              <div className="border-t border-slate-200 w-full"></div>
-              <span className="bg-white px-3 text-[11px] text-slate-400 font-medium uppercase tracking-wider absolute">
-                Or Sign In With Account
-              </span>
+              <button
+                type="button"
+                onClick={handleDemoStudentLogin}
+                disabled={loading}
+                className="btn-blue text-xs py-2.5 w-full mt-1"
+              >
+                🎓 Log In as Demo Student
+              </button>
             </div>
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="label">Email Address</label>
+                <label className="label">Student Email Address</label>
                 <input
                   type="email"
                   required
-                  placeholder={portalType === "admin" ? "Nafeesmohamed@gmail.com" : "student@study.edu"}
+                  placeholder="student@study.edu"
                   className="glass-input w-full"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -244,16 +197,19 @@ export default function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full py-3 text-sm mt-2"
+                className="btn-primary w-full py-3 text-sm font-bold mt-2"
               >
-                {loading ? "Verifying Credentials..." : `Sign In to ${portalType === "admin" ? "Admin Dashboard" : "Student Hub"}`}
+                {loading ? "Logging in..." : "Sign In to Student Dashboard"}
               </button>
             </form>
           </div>
 
-          <p className="text-center text-[11px] text-slate-400 mt-6">
-            Secure 256-bit encrypted authentication • STUDY WITH NAFEES
-          </p>
+          <div className="mt-6 text-center text-xs text-slate-500 pt-4 border-t border-slate-200">
+            Need an account?{" "}
+            <Link href="/register" className="text-brand-600 font-semibold hover:underline">
+              Register Student Account
+            </Link>
+          </div>
         </div>
 
       </div>

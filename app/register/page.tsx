@@ -72,10 +72,7 @@ export default function RegisterPage() {
 
       await notifyAdminOfRegistration({ fullName, email, phone, grade });
 
-      setTimeout(() => {
-        router.push("/dashboard");
-        router.refresh();
-      }, 400);
+      window.location.href = "/dashboard";
     } catch (err: any) {
       setError(err.message || "Registration failed. Please try again.");
     } finally {

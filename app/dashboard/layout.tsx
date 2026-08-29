@@ -15,8 +15,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
   useEffect(() => {
     const current = StudyStore.getCurrentUser();
     if (!current) {
-      const demo = StudyStore.loginDemo("student");
-      setUser(demo);
+      window.location.href = "/login";
     } else {
       setUser(current);
     }

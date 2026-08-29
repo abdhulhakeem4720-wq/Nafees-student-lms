@@ -14,19 +14,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [accessDenied, setAccessDenied] = useState(false);
 
   useEffect(() => {
+    if (pathname === "/admin/login") return;
     const current = StudyStore.getCurrentUser();
-
-    // Strict Security Guard: Block student access
     if (!current || current.role !== "admin") {
       setAccessDenied(true);
-      setTimeout(() => {
-        router.push("/dashboard?error=access_denied");
-      }, 2000);
     } else {
       setUser(current);
       setAccessDenied(false);
     }
-  }, [router]);
+  }, [pathname]);
+
+  if (pathname === "/admin/login") {
+    return <>{children}</>;
+  }
 
   function handleLogout() {
     StudyStore.logout();
@@ -92,7 +92,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           {/* Admin Profile */}
           <div className="p-3.5 rounded-2xl bg-blue-50 border border-blue-200 mb-6 flex items-center gap-3">
             <div className="w-10 h-10 rounded-full border-2 border-blue-400 flex-shrink-0 overflow-hidden shadow-sm">
-              <img src="/api/logo" alt="Nafees" className="w-full h-full object-cover object-top" />
+              <img src="/nafees-logo.jpg" alt="Nafees" className="w-full h-full object-cover object-top" />
             </div>
             <div className="overflow-hidden">
               <span className="block font-bold text-xs text-slate-900 truncate">Nafees</span>

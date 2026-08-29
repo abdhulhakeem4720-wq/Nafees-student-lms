@@ -18,8 +18,8 @@ export default function Logo({ size = "md", href = "/", showSubtitle = true }: L
     <div className="flex items-center gap-3">
       {/* Nafees Photo Logo Container */}
       <div className={`${imageSizeClass} rounded-2xl overflow-hidden border-2 border-blue-400/80 shadow-lg shadow-blue-500/25 flex-shrink-0 bg-white relative group`}>
-        <img
-          src="/api/logo"
+          <img
+          src="/nafees-logo.jpg"
           alt="STUDY WITH NAFEES Logo"
           className="w-full h-full object-cover object-top scale-105 group-hover:scale-110 transition-transform duration-300"
           onError={(e) => {

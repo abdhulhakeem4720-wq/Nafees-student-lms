@@ -15,7 +15,7 @@ export default function HomePage() {
 
   function handleQuickDemo(role: "student" | "admin") {
     StudyStore.loginDemo(role);
-    router.push(role === "admin" ? "/admin" : "/dashboard");
+    window.location.href = role === "admin" ? "/admin" : "/dashboard";
   }
 
   return (
@@ -37,10 +37,10 @@ export default function HomePage() {
               ⚡ Quick Student Demo
             </button>
             <Link href="/login" className="btn-secondary text-xs py-2 px-4">
-              Sign In
+              Student Login
             </Link>
-            <Link href="/register" className="btn-primary text-xs py-2 px-4">
-              Register Free
+            <Link href="/admin/login" className="btn-primary text-xs py-2 px-4">
+              🛡️ Admin Portal
             </Link>
           </nav>
         </div>
@@ -50,7 +50,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-6 pt-16 pb-20 text-center relative z-10">
         <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-700 text-xs font-semibold mb-6">
           <span className="w-2 h-2 rounded-full bg-blue-400 animate-ping"></span>
-          2026 Academic Registration Now Open • STUDY WITH NAFEES
+          2026 Academic Portal • STUDY WITH NAFEES
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-extrabold text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight mb-6">
@@ -64,22 +64,19 @@ export default function HomePage() {
           Comprehensive online learning platform for Grades 6 to 10. Access structured syllabus notes, interactive video guides, automated online quizzes, and direct payment slip verification.
         </p>
 
-        {/* Action Buttons & Quick Demo */}
+        {/* Action Buttons */}
         <div className="flex flex-wrap justify-center gap-4 mb-16">
-          <Link href="/register" className="btn-blue text-base py-3.5 px-8">
-            🎓 Register as Student
+          <Link href="/login" className="btn-blue text-base py-3.5 px-8">
+            🎓 Student Portal
+          </Link>
+          <Link href="/admin/login" className="btn-primary text-base py-3.5 px-8">
+            🛡️ Admin Portal
           </Link>
           <button
             onClick={() => handleQuickDemo("student")}
-            className="btn-primary text-base py-3.5 px-8"
-          >
-            🚀 Explore Grade 9 Demo
-          </button>
-          <button
-            onClick={() => handleQuickDemo("admin")}
             className="btn-secondary text-base py-3.5 px-6"
           >
-            🛡️ Explore Admin Portal
+            🚀 Grade 9 Student Demo
           </button>
         </div>
 

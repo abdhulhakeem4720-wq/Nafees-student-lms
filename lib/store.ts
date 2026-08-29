@@ -24,14 +24,14 @@ export const MOCK_STUDENT_USER: UserProfile = {
 };
 
 export const MOCK_ADMIN_USER: UserProfile = {
-  id: "demo-admin-1",
-  email: "admin@study.edu",
-  fullName: "Dr. Anura Perera (Academy Director)",
+  id: "admin-1",
+  email: "nfsmhdlms@gmail.com",
+  fullName: "Nafees Mohamed (Academy Director)",
   phone: "0719876543",
   grade: 10,
   role: "admin",
   registeredSubjects: [],
-  password: "Admin@123"
+  password: "Nfsmhd@000"
 };
 
 const STORAGE_KEYS = {
@@ -68,7 +68,7 @@ function setStorageItem<T>(key: string, value: T): void {
 export const StudyStore = {
   // Auth Session
   getCurrentUser(): UserProfile | null {
-    return getStorageItem<UserProfile | null>(STORAGE_KEYS.SESSION, MOCK_STUDENT_USER);
+    return getStorageItem<UserProfile | null>(STORAGE_KEYS.SESSION, null);
   },
 
   setCurrentUser(user: UserProfile | null): void {
@@ -110,11 +110,11 @@ export const StudyStore = {
     return newUser;
   },
 
-  validateCredentials(email: string, password: string): UserProfile | null {
-    const adminEmail = "Nafeesmohamed@gmail.com";
-    const adminPassword = "Nfsmhd@lms";
+  validateAdminCredentials(email: string, password: string): UserProfile | null {
+    const adminEmail = "nfsmhdlms@gmail.com";
+    const adminPassword = "Nfsmhd@000";
 
-    if (email === adminEmail && password === adminPassword) {
+    if (email.trim().toLowerCase() === adminEmail.toLowerCase() && password === adminPassword) {
       return {
         id: "admin-1",
         email: adminEmail,
@@ -126,10 +126,25 @@ export const StudyStore = {
         password: adminPassword
       };
     }
+    return null;
+  },
+
+  validateStudentCredentials(email: string, password: string): UserProfile | null {
+    const adminEmail = "nfsmhdlms@gmail.com";
+    // Block admin email from logging in via student login
+    if (email.trim().toLowerCase() === adminEmail.toLowerCase()) {
+      return null;
+    }
 
     const users = this.getRegisteredUsers();
-    const user = users.find((u) => u.email === email && u.password === password);
+    const user = users.find((u) => u.email.trim().toLowerCase() === email.trim().toLowerCase() && u.password === password);
     return user || null;
+  },
+
+  validateCredentials(email: string, password: string): UserProfile | null {
+    const admin = this.validateAdminCredentials(email, password);
+    if (admin) return admin;
+    return this.validateStudentCredentials(email, password);
   },
 
   isStrongPassword(password: string): boolean {
