@@ -24,6 +24,10 @@ export default function AdminMaterialsPage() {
     setSubjects(subs);
     if (subs.length > 0) setSelectedSubjectId(subs[0].id);
 
+    StudyStore.refreshMaterialsFromSupabase().then(() => {
+      setMaterials(StudyStore.getMaterials());
+    });
+
     function handleStorage(e: StorageEvent) {
       if (e.key === "study_hub_materials") {
         setMaterials(StudyStore.getMaterials());

@@ -36,6 +36,10 @@ function StudentDashboardContent() {
       setMyPayments([]);
     }
 
+    StudyStore.refreshMaterialsFromSupabase().then(() => {
+      setMaterials(StudyStore.getMaterials());
+    });
+
     function handleStorage(e: StorageEvent) {
       if (e.key === "study_hub_materials" || e.key === "study_hub_quizzes" || e.key === "study_hub_payments") {
         setMaterials(StudyStore.getMaterials());

@@ -73,6 +73,77 @@ function setStorageItem<T>(key: string, value: T): void {
   }
 }
 
+async function getSupabase() {
+  if (typeof window === "undefined") return null;
+  try {
+    const { createClient } = await import("@/lib/supabase/client");
+    return createClient();
+  } catch {
+    return null;
+  }
+}
+
+async function syncMaterialsToSupabase(): Promise<void> {
+  const supabase = await getSupabase();
+  if (!supabase) return;
+
+  try {
+    const materials = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
+    const rows = materials.map((m) => ({
+      id: m.id,
+      subject_id: m.subjectId,
+      title: m.title,
+      description: m.title,
+      file_url: m.fileUrl,
+      subject_title: m.subjectTitle,
+      grade: m.grade,
+      category: m.category,
+      type: m.type,
+      file_size: m.fileSize,
+      downloads: m.downloads,
+      uploaded_at: m.uploadedAt
+    }));
+
+    const { error } = await supabase.from("materials").upsert(rows);
+    if (error) {
+      console.warn("Supabase materials sync error:", error.message);
+    }
+  } catch (err) {
+    console.warn("Failed to sync materials to Supabase:", err);
+  }
+}
+
+async function refreshMaterialsFromSupabase(): Promise<void> {
+  const supabase = await getSupabase();
+  if (!supabase) return;
+
+  try {
+    const { data, error } = await supabase.from("materials").select("*");
+    if (error) {
+      console.warn("Supabase materials fetch error:", error.message);
+      return;
+    }
+    if (data && data.length > 0) {
+      const materials: MaterialItem[] = data.map((row: any) => ({
+        id: row.id,
+        title: row.title,
+        subjectId: row.subject_id || "",
+        subjectTitle: row.subject_title || row.title,
+        grade: row.grade || 9,
+        category: (row.category as "Science" | "Mathematics") || "Science",
+        type: (row.type as MaterialItem["type"]) || "PDF Note",
+        fileUrl: row.file_url || "#",
+        fileSize: row.file_size || "1.5 MB",
+        downloads: row.downloads || 0,
+        uploadedAt: row.uploaded_at || new Date().toISOString().split("T")[0]
+      }));
+      setStorageItem(STORAGE_KEYS.MATERIALS, materials);
+    }
+  } catch (err) {
+    console.warn("Failed to refresh materials from Supabase:", err);
+  }
+}
+
 // Global Store Helper
 export const StudyStore = {
   // Auth Session
@@ -215,12 +286,14 @@ export const StudyStore = {
       uploadedAt: new Date().toISOString().split("T")[0]
     };
     setStorageItem(STORAGE_KEYS.MATERIALS, [newMat, ...list]);
+    syncMaterialsToSupabase().catch(() => {});
     return newMat;
   },
 
   deleteMaterial(id: string): void {
     const list = this.getMaterials().filter((m) => m.id !== id);
     setStorageItem(STORAGE_KEYS.MATERIALS, list);
+    syncMaterialsToSupabase().catch(() => {});
   },
 
   incrementMaterialDownload(id: string): void {
@@ -228,6 +301,15 @@ export const StudyStore = {
       m.id === id ? { ...m, downloads: m.downloads + 1 } : m
     );
     setStorageItem(STORAGE_KEYS.MATERIALS, list);
+    syncMaterialsToSupabase().catch(() => {});
+  },
+
+  async refreshMaterialsFromSupabase(): Promise<void> {
+    await refreshMaterialsFromSupabase();
+  },
+
+  async syncMaterialsToSupabase(): Promise<void> {
+    await syncMaterialsToSupabase();
   },
 
   // Quizzes

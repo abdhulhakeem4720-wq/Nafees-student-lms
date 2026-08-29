@@ -19,6 +19,10 @@ export default function StudentMaterialsPage() {
     setUser(StudyStore.getCurrentUser());
     refreshMaterials();
 
+    StudyStore.refreshMaterialsFromSupabase().then(() => {
+      refreshMaterials();
+    });
+
     function handleStorage(e: StorageEvent) {
       if (e.key === "study_hub_materials") {
         refreshMaterials();

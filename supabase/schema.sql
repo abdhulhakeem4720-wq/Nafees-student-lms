@@ -282,6 +282,17 @@ insert into subjects (name, grade, category, fee) values
 on conflict (name, grade) do nothing;
 
 -- =====================================================================
+-- MATERIALS TABLE ENHANCEMENTS
+-- =====================================================================
+alter table materials add column if not exists subject_title text;
+alter table materials add column if not exists grade int;
+alter table materials add column if not exists category text;
+alter table materials add column if not exists type text;
+alter table materials add column if not exists file_size text;
+alter table materials add column if not exists downloads int default 0;
+alter table materials add column if not exists uploaded_at text;
+
+-- =====================================================================
 -- To create your first admin: sign up normally through the app, then
 -- in SQL editor run:
 --   update profiles set role = 'admin' where email = 'you@example.com';

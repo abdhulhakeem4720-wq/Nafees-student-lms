@@ -16,6 +16,10 @@ export default function AdminOverviewPage() {
     setQuizzes(StudyStore.getQuizzes());
     setMessages(StudyStore.getMessages());
 
+    StudyStore.refreshMaterialsFromSupabase().then(() => {
+      setMaterials(StudyStore.getMaterials());
+    });
+
     function handleStorage(e: StorageEvent) {
       if (["study_hub_materials", "study_hub_quizzes", "study_hub_payments", "study_hub_messages"].includes(e.key || "")) {
         setPayments(StudyStore.getPayments());
