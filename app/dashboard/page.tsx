@@ -35,6 +35,48 @@ function StudentDashboardContent() {
     } else {
       setMyPayments([]);
     }
+
+    function handleStorage(e: StorageEvent) {
+      if (e.key === "study_hub_materials" || e.key === "study_hub_quizzes" || e.key === "study_hub_payments") {
+        setMaterials(StudyStore.getMaterials());
+        setQuizzes(StudyStore.getQuizzes());
+        const allPayments = StudyStore.getPayments();
+        const currentUser = StudyStore.getCurrentUser();
+        if (currentUser) {
+          const filtered = allPayments.filter(
+            (p) =>
+              p.studentId === currentUser.id ||
+              (p.studentEmail && p.studentEmail.toLowerCase() === currentUser.email.toLowerCase())
+          );
+          setMyPayments(filtered);
+        }
+      }
+    }
+
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        setMaterials(StudyStore.getMaterials());
+        setQuizzes(StudyStore.getQuizzes());
+        const allPayments = StudyStore.getPayments();
+        const currentUser = StudyStore.getCurrentUser();
+        if (currentUser) {
+          const filtered = allPayments.filter(
+            (p) =>
+              p.studentId === currentUser.id ||
+              (p.studentEmail && p.studentEmail.toLowerCase() === currentUser.email.toLowerCase())
+          );
+          setMyPayments(filtered);
+        }
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   const registeredSubjectList = subjects.filter((s) => user?.registeredSubjects?.includes(s.id));

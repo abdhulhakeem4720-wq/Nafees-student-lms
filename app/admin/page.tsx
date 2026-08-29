@@ -15,6 +15,32 @@ export default function AdminOverviewPage() {
     setMaterials(StudyStore.getMaterials());
     setQuizzes(StudyStore.getQuizzes());
     setMessages(StudyStore.getMessages());
+
+    function handleStorage(e: StorageEvent) {
+      if (["study_hub_materials", "study_hub_quizzes", "study_hub_payments", "study_hub_messages"].includes(e.key || "")) {
+        setPayments(StudyStore.getPayments());
+        setMaterials(StudyStore.getMaterials());
+        setQuizzes(StudyStore.getQuizzes());
+        setMessages(StudyStore.getMessages());
+      }
+    }
+
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        setPayments(StudyStore.getPayments());
+        setMaterials(StudyStore.getMaterials());
+        setQuizzes(StudyStore.getQuizzes());
+        setMessages(StudyStore.getMessages());
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   const pendingPayments = payments.filter((p) => p.status === "Pending");

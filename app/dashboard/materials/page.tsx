@@ -11,9 +11,33 @@ export default function StudentMaterialsPage() {
   const [selectedGradeFilter, setSelectedGradeFilter] = useState<string>("all");
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
 
+  function refreshMaterials() {
+    setMaterials(StudyStore.getMaterials());
+  }
+
   useEffect(() => {
     setUser(StudyStore.getCurrentUser());
-    setMaterials(StudyStore.getMaterials());
+    refreshMaterials();
+
+    function handleStorage(e: StorageEvent) {
+      if (e.key === "study_hub_materials") {
+        refreshMaterials();
+      }
+    }
+
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        refreshMaterials();
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   const filteredMaterials = materials.filter((m) => {
@@ -30,7 +54,7 @@ export default function StudentMaterialsPage() {
 
   function handleDownload(mat: MaterialItem) {
     StudyStore.incrementMaterialDownload(mat.id);
-    setMaterials(StudyStore.getMaterials());
+    refreshMaterials();
 
     if (mat.fileUrl && mat.fileUrl !== "#") {
       const link = document.createElement("a");

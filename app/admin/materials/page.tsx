@@ -23,6 +23,26 @@ export default function AdminMaterialsPage() {
     const subs = StudyStore.getSubjects();
     setSubjects(subs);
     if (subs.length > 0) setSelectedSubjectId(subs[0].id);
+
+    function handleStorage(e: StorageEvent) {
+      if (e.key === "study_hub_materials") {
+        setMaterials(StudyStore.getMaterials());
+      }
+    }
+
+    function handleVisibility() {
+      if (document.visibilityState === "visible") {
+        setMaterials(StudyStore.getMaterials());
+      }
+    }
+
+    window.addEventListener("storage", handleStorage);
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      window.removeEventListener("storage", handleStorage);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, []);
 
   function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
