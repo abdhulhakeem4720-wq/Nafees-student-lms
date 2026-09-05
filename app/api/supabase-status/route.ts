@@ -8,7 +8,7 @@ export async function GET() {
   const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || "";
 
-  const isPlaceholder = !url || url.includes("your-project.supabase.co") || url.includes("zjhnniexwyleodytmtro");
+  const isPlaceholder = !url || url.includes("your-project.supabase.co");
 
   if (isPlaceholder) {
     return NextResponse.json({

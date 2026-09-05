@@ -4,7 +4,6 @@ export function isSupabasePlaceholder(url?: string): boolean {
   if (!url) return true;
   return (
     url.includes("your-project.supabase.co") ||
-    url.includes("zjhnniexwyleodytmtro") ||
     url.trim() === ""
   );
 }
