@@ -89,24 +89,37 @@ async function syncMaterialsToSupabase(): Promise<void> {
 
   try {
     const materials = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
-    const rows = materials.map((m) => ({
-      id: m.id,
-      subject_id: m.subjectId,
-      title: m.title,
-      description: m.title,
-      file_url: m.fileUrl,
-      subject_title: m.subjectTitle,
-      grade: m.grade,
-      category: m.category,
-      type: m.type,
-      file_size: m.fileSize,
-      downloads: m.downloads,
-      uploaded_at: m.uploadedAt
-    }));
+    for (const m of materials) {
+      const safeUrl = m.fileUrl && m.fileUrl.length > 100000 ? "#" : m.fileUrl;
+      const desc = `${m.type} | Grade ${m.grade} | ${m.subjectTitle} | Size: ${m.fileSize}`;
+      
+      const extendedRow: any = {
+        id: m.id,
+        title: m.title,
+        description: desc,
+        file_url: safeUrl,
+        subject_title: m.subjectTitle,
+        grade: m.grade,
+        category: m.category,
+        type: m.type,
+        file_size: m.fileSize,
+        downloads: m.downloads,
+        uploaded_at: m.uploadedAt
+      };
+      if (m.subjectId && !m.subjectId.startsWith("sub-")) {
+        extendedRow.subject_id = m.subjectId;
+      }
 
-    const { error } = await supabase.from("materials").upsert(rows);
-    if (error) {
-      console.warn("Supabase materials sync error:", error.message);
+      const { error } = await supabase.from("materials").upsert(extendedRow);
+      if (error) {
+        const standardRow = {
+          id: m.id,
+          title: m.title,
+          description: desc,
+          file_url: safeUrl
+        };
+        await supabase.from("materials").upsert(standardRow);
+      }
     }
   } catch (err) {
     console.warn("Failed to sync materials to Supabase:", err);
@@ -124,20 +137,49 @@ async function refreshMaterialsFromSupabase(): Promise<void> {
       return;
     }
     if (data && data.length > 0) {
-      const materials: MaterialItem[] = data.map((row: any) => ({
-        id: row.id,
-        title: row.title,
-        subjectId: row.subject_id || "",
-        subjectTitle: row.subject_title || row.title,
-        grade: row.grade || 9,
-        category: (row.category as "Science" | "Mathematics") || "Science",
-        type: (row.type as MaterialItem["type"]) || "PDF Note",
-        fileUrl: row.file_url || "#",
-        fileSize: row.file_size || "1.5 MB",
-        downloads: row.downloads || 0,
-        uploadedAt: row.uploaded_at || new Date().toISOString().split("T")[0]
-      }));
-      setStorageItem(STORAGE_KEYS.MATERIALS, materials);
+      const materials: MaterialItem[] = data.map((row: any) => {
+        // Parse metadata from description if custom columns are missing
+        let type: MaterialItem["type"] = (row.type as any) || "PDF Note";
+        let grade = row.grade || 9;
+        let subjectTitle = row.subject_title || row.title;
+        let fileSize = row.file_size || "1.5 MB";
+
+        if (row.description && row.description.includes("|")) {
+          const parts = row.description.split("|").map((p: string) => p.trim());
+          if (parts.length >= 3) {
+            type = (parts[0] as any) || type;
+            const gMatch = parts[1].match(/\d+/);
+            if (gMatch) grade = parseInt(gMatch[0], 10);
+            subjectTitle = parts[2] || subjectTitle;
+            if (parts[3] && parts[3].startsWith("Size:")) {
+              fileSize = parts[3].replace("Size:", "").trim();
+            }
+          }
+        }
+
+        return {
+          id: row.id,
+          title: row.title,
+          subjectId: row.subject_id || "",
+          subjectTitle,
+          grade,
+          category: (row.category as "Science" | "Mathematics") || "Science",
+          type,
+          fileUrl: row.file_url || "#",
+          fileSize,
+          downloads: row.downloads || 0,
+          uploadedAt: row.uploaded_at || new Date().toISOString().split("T")[0]
+        };
+      });
+
+      // Merge with initial materials if unique
+      const existing = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
+      const map = new Map<string, MaterialItem>();
+      existing.forEach((item) => map.set(item.id, item));
+      materials.forEach((item) => map.set(item.id, item));
+
+      const merged = Array.from(map.values());
+      setStorageItem(STORAGE_KEYS.MATERIALS, merged);
     }
   } catch (err) {
     console.warn("Failed to refresh materials from Supabase:", err);
