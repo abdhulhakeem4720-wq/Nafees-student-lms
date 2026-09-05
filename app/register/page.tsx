@@ -44,19 +44,29 @@ export default function RegisterPage() {
 
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (supabaseUrl && !supabaseUrl.includes("your-project.supabase.co")) {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: {
-            data: { full_name: fullName, phone, grade: grade.toString(), role: "student" }
-          }
-        });
+      const { isSupabasePlaceholder } = await import("@/lib/supabase/client");
 
-        if (signUpError) {
-          setError(signUpError.message);
-          setLoading(false);
-          return;
+      if (supabaseUrl && !isSupabasePlaceholder(supabaseUrl)) {
+        try {
+          const { data, error: signUpError } = await supabase.auth.signUp({
+            email,
+            password,
+            options: {
+              data: { full_name: fullName, phone, grade: grade.toString(), role: "student" }
+            }
+          });
+
+          if (signUpError) {
+            console.warn("Supabase auth signUp error:", signUpError.message);
+            // If network fetch failed, don't block registration completely
+            if (!signUpError.message.includes("Failed to fetch") && !signUpError.message.includes("fetch failed")) {
+              setError(signUpError.message);
+              setLoading(false);
+              return;
+            }
+          }
+        } catch (netErr) {
+          console.warn("Supabase registration network warning:", netErr);
         }
       }
 

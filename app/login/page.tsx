@@ -38,33 +38,39 @@ export default function StudentLoginPage() {
 
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-      if (supabaseUrl && !supabaseUrl.includes("your-project.supabase.co")) {
-        const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-        if (!signInError && data?.user) {
-          const { data: profile } = await supabase
-            .from("profiles")
-            .select("role")
-            .eq("id", data.user.id)
-            .single();
+      const { isSupabasePlaceholder } = await import("@/lib/supabase/client");
 
-          if (profile?.role === "admin") {
-            setError("Administrator accounts cannot log in through the Student Portal. Please use the Admin Portal.");
-            setLoading(false);
+      if (supabaseUrl && !isSupabasePlaceholder(supabaseUrl)) {
+        try {
+          const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+          if (!signInError && data?.user) {
+            const { data: profile } = await supabase
+              .from("profiles")
+              .select("role")
+              .eq("id", data.user.id)
+              .single();
+
+            if (profile?.role === "admin") {
+              setError("Administrator accounts cannot log in through the Student Portal. Please use the Admin Portal.");
+              setLoading(false);
+              return;
+            }
+
+            StudyStore.setCurrentUser({
+              id: data.user.id,
+              email: data.user.email || email,
+              fullName: data.user.user_metadata?.full_name || "Registered Student",
+              phone: data.user.user_metadata?.phone || "",
+              grade: Number(data.user.user_metadata?.grade || 9),
+              role: "student",
+              registeredSubjects: []
+            });
+
+            window.location.href = "/dashboard";
             return;
           }
-
-          StudyStore.setCurrentUser({
-            id: data.user.id,
-            email: data.user.email || email,
-            fullName: data.user.user_metadata?.full_name || "Registered Student",
-            phone: data.user.user_metadata?.phone || "",
-            grade: Number(data.user.user_metadata?.grade || 9),
-            role: "student",
-            registeredSubjects: []
-          });
-
-          window.location.href = "/dashboard";
-          return;
+        } catch (netErr) {
+          console.warn("Supabase auth network error, attempting local store login:", netErr);
         }
       }
 

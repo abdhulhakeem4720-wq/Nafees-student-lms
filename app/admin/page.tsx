@@ -75,6 +75,9 @@ export default function AdminOverviewPage() {
             <Link href="/admin/messages" className="bg-white text-brand-700 text-xs py-2.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center gap-2 hover:bg-blue-50 transition">
               📢 Broadcast Batch Email
             </Link>
+            <Link href="/admin/supabase" className="bg-white/20 text-white text-xs py-2.5 px-4 rounded-xl font-semibold inline-flex items-center justify-center gap-2 hover:bg-white/30 transition border border-white/30">
+              ⚡ Supabase Database Control
+            </Link>
           </div>
         </div>
       </div>
