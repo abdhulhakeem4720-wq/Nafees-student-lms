@@ -4,6 +4,20 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { StudyStore } from "@/lib/store";
 import { AboutSirDetails, PortfolioItem, SirArticle } from "@/lib/mockData";
+import {
+  User,
+  Award,
+  Newspaper,
+  UserCheck,
+  Save,
+  Pencil,
+  Plus,
+  Trash2,
+  ExternalLink,
+  PenTool,
+  CheckCircle2,
+  BookOpen
+} from "lucide-react";
 
 export default function AdminAboutManagementPage() {
   const [activeTab, setActiveTab] = useState<"sir" | "portfolio" | "articles">("sir");
@@ -31,7 +45,7 @@ export default function AdminAboutManagementPage() {
   const [portCategory, setPortCategory] = useState("Milestone");
   const [portDescription, setPortDescription] = useState("");
   const [portYear, setPortYear] = useState("");
-  const [portIcon, setPortIcon] = useState("🏆");
+  const [portIcon, setPortIcon] = useState("Award");
 
   // Articles State & Form
   const [articles, setArticles] = useState<SirArticle[]>([]);
@@ -75,7 +89,7 @@ export default function AdminAboutManagementPage() {
     });
 
     setSirDetails(updated);
-    triggerAlert("✅ Sir Profile & Details updated successfully!");
+    triggerAlert("Sir Profile & Details updated successfully!");
   }
 
   // --- Portfolio CRUD ---
@@ -89,9 +103,9 @@ export default function AdminAboutManagementPage() {
         category: portCategory,
         description: portDescription,
         year: portYear,
-        icon: portIcon
+        icon: portIcon || "Award"
       });
-      triggerAlert("✅ Portfolio item updated!");
+      triggerAlert("Portfolio item updated!");
       setEditingPortId(null);
     } else {
       StudyStore.addPortfolio({
@@ -99,9 +113,9 @@ export default function AdminAboutManagementPage() {
         category: portCategory,
         description: portDescription,
         year: portYear || "2026",
-        icon: portIcon || "🌟"
+        icon: portIcon || "Award"
       });
-      triggerAlert("✅ New Portfolio item added!");
+      triggerAlert("New Portfolio item added!");
     }
 
     setPortTitle("");
@@ -123,7 +137,7 @@ export default function AdminAboutManagementPage() {
     if (confirm("Are you sure you want to delete this portfolio item?")) {
       StudyStore.deletePortfolio(id);
       setPortfolios(StudyStore.getPortfolios());
-      triggerAlert("🗑️ Portfolio item deleted.");
+      triggerAlert("Portfolio item deleted.");
     }
   }
 
@@ -142,7 +156,7 @@ export default function AdminAboutManagementPage() {
         author: artAuthor,
         imageUrl: artImageUrl
       });
-      triggerAlert("✅ Article updated successfully!");
+      triggerAlert("Article updated successfully!");
       setEditingArtId(null);
     } else {
       StudyStore.addArticle({
@@ -154,7 +168,7 @@ export default function AdminAboutManagementPage() {
         author: artAuthor || "Sir Nafees Mohamed",
         imageUrl: artImageUrl
       });
-      triggerAlert("✅ New Article published!");
+      triggerAlert("New Article published!");
     }
 
     setArtTitle("");
@@ -179,7 +193,7 @@ export default function AdminAboutManagementPage() {
     if (confirm("Are you sure you want to delete this article?")) {
       StudyStore.deleteArticle(id);
       setArticles(StudyStore.getArticles());
-      triggerAlert("🗑️ Article deleted.");
+      triggerAlert("Article deleted.");
     }
   }
 
@@ -197,17 +211,18 @@ export default function AdminAboutManagementPage() {
         <Link
           href="/about"
           target="_blank"
-          className="btn-blue text-xs py-2.5 px-4 flex items-center justify-center gap-2 shadow"
+          className="btn-blue text-xs py-2.5 px-4 inline-flex items-center justify-center gap-2 shadow-sm"
         >
-          <span>👀 View Live About Us Page</span>
-          <span className="text-sm">↗</span>
+          <span>View Live About Us Page</span>
+          <ExternalLink className="w-3.5 h-3.5" />
         </Link>
       </div>
 
       {/* Alert Banner */}
       {alertMsg && (
-        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold shadow-sm animate-fadeIn">
-          {alertMsg}
+        <div className="p-4 rounded-xl bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold shadow-sm flex items-center gap-2 animate-fadeIn">
+          <CheckCircle2 className="w-4 h-4 text-blue-600 flex-shrink-0" />
+          <span>{alertMsg.replace(/^[^\w]+/, "")}</span>
         </div>
       )}
 
@@ -215,44 +230,48 @@ export default function AdminAboutManagementPage() {
       <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-slate-100 border border-slate-200 text-xs font-bold">
         <button
           onClick={() => setActiveTab("sir")}
-          className={`flex-1 py-3 rounded-xl transition ${
+          className={`flex-1 py-3 rounded-xl transition inline-flex items-center justify-center gap-2 ${
             activeTab === "sir"
-              ? "bg-blue-600 text-white shadow-md"
+              ? "bg-blue-600 text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          👨‍🏫 Sir Details & Bio
+          <User className="w-4 h-4" />
+          Sir Details & Bio
         </button>
 
         <button
           onClick={() => setActiveTab("portfolio")}
-          className={`flex-1 py-3 rounded-xl transition ${
+          className={`flex-1 py-3 rounded-xl transition inline-flex items-center justify-center gap-2 ${
             activeTab === "portfolio"
-              ? "bg-brand-600 text-white shadow-md"
+              ? "bg-blue-600 text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          🏆 Portfolio & Highlights ({portfolios.length})
+          <Award className="w-4 h-4" />
+          Portfolio & Highlights ({portfolios.length})
         </button>
 
         <button
           onClick={() => setActiveTab("articles")}
-          className={`flex-1 py-3 rounded-xl transition ${
+          className={`flex-1 py-3 rounded-xl transition inline-flex items-center justify-center gap-2 ${
             activeTab === "articles"
-              ? "bg-indigo-600 text-white shadow-md"
+              ? "bg-blue-600 text-white shadow-sm"
               : "text-slate-600 hover:text-slate-900"
           }`}
         >
-          📰 Articles & News ({articles.length})
+          <Newspaper className="w-4 h-4" />
+          Articles & News ({articles.length})
         </button>
       </div>
 
       {/* TAB 1: SIR DETAILS EDITOR */}
       {activeTab === "sir" && (
         <div className="glass-card p-6 sm:p-8 rounded-2xl border border-slate-200 space-y-6">
-          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>✏️ Edit Sir Details & Profile Info</span>
-          </h2>
+          <div className="flex items-center gap-2">
+            <UserCheck className="w-5 h-5 text-blue-600" />
+            <h2 className="text-lg font-bold text-slate-900">Edit Sir Details & Profile Info</h2>
+          </div>
 
           <form onSubmit={handleSaveSirDetails} className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -368,8 +387,9 @@ export default function AdminAboutManagementPage() {
               />
             </div>
 
-            <button type="submit" className="btn-blue w-full py-3.5 text-xs font-bold shadow">
-              💾 Save & Update Sir Details
+            <button type="submit" className="btn-blue w-full py-3.5 text-xs font-bold shadow-sm inline-flex items-center justify-center gap-2">
+              <Save className="w-4 h-4" />
+              Save & Update Sir Details
             </button>
           </form>
         </div>
@@ -381,9 +401,16 @@ export default function AdminAboutManagementPage() {
           
           {/* Form */}
           <div className="md:col-span-5 glass-card p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">
-              {editingPortId ? "✏️ Edit Portfolio Item" : "➕ Add New Portfolio Item"}
-            </h2>
+            <div className="flex items-center gap-2 mb-4">
+              {editingPortId ? (
+                <Pencil className="w-5 h-5 text-blue-600" />
+              ) : (
+                <Plus className="w-5 h-5 text-blue-600" />
+              )}
+              <h2 className="text-lg font-bold text-slate-900">
+                {editingPortId ? "Edit Portfolio Item" : "Add New Portfolio Item"}
+              </h2>
+            </div>
 
             <form onSubmit={handleSavePortfolio} className="space-y-4">
               <div>
@@ -426,17 +453,6 @@ export default function AdminAboutManagementPage() {
               </div>
 
               <div>
-                <label className="label">Icon Emoji</label>
-                <input
-                  type="text"
-                  placeholder="🏆 or 💻 or 📚 or 🎖️"
-                  value={portIcon}
-                  onChange={(e) => setPortIcon(e.target.value)}
-                  className="glass-input w-full"
-                />
-              </div>
-
-              <div>
                 <label className="label">Description</label>
                 <textarea
                   required
@@ -449,7 +465,8 @@ export default function AdminAboutManagementPage() {
               </div>
 
               <div className="flex gap-2">
-                <button type="submit" className="btn-brand flex-1 py-3 text-xs font-bold">
+                <button type="submit" className="btn-blue flex-1 py-3 text-xs font-bold shadow-sm inline-flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
                   {editingPortId ? "Update Portfolio Item" : "Add to Portfolio"}
                 </button>
                 {editingPortId && (
@@ -471,14 +488,17 @@ export default function AdminAboutManagementPage() {
 
           {/* Existing List */}
           <div className="md:col-span-7 glass-card p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">🏆 Current Portfolio Items ({portfolios.length})</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <Award className="w-5 h-5 text-blue-600" />
+              <h2 className="text-lg font-bold text-slate-900">Current Portfolio Items ({portfolios.length})</h2>
+            </div>
 
             <div className="space-y-3">
               {portfolios.map((item) => (
-                <div key={item.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 flex items-start justify-between gap-3">
+                <div key={item.id} className="p-4 rounded-xl bg-blue-50/60 border border-blue-100 flex items-start justify-between gap-3">
                   <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                      <span className="text-xl">{item.icon}</span>
+                      <Award className="w-4 h-4 text-blue-600 flex-shrink-0" />
                       <span className="badge badge-brand">{item.category}</span>
                       <span className="text-[10px] text-slate-500 font-semibold">{item.year}</span>
                     </div>
@@ -489,15 +509,17 @@ export default function AdminAboutManagementPage() {
                   <div className="flex items-center gap-1">
                     <button
                       onClick={() => handleEditPortfolio(item)}
-                      className="p-1.5 rounded-lg text-xs font-bold text-blue-600 hover:bg-blue-100 transition"
+                      className="p-1.5 rounded-lg text-xs font-semibold text-blue-600 hover:bg-blue-100 transition inline-flex items-center gap-1"
+                      title="Edit item"
                     >
-                      ✏️
+                      <Pencil className="w-3.5 h-3.5" />
                     </button>
                     <button
                       onClick={() => handleDeletePortfolio(item.id)}
-                      className="p-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-100 transition"
+                      className="p-1.5 rounded-lg text-xs font-semibold text-red-600 hover:bg-red-100 transition inline-flex items-center gap-1"
+                      title="Delete item"
                     >
-                      🗑️
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </div>
@@ -514,9 +536,16 @@ export default function AdminAboutManagementPage() {
           
           {/* Form */}
           <div className="md:col-span-6 glass-card p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">
-              {editingArtId ? "✏️ Edit Article About Sir" : "✍️ Publish New Article About Sir"}
-            </h2>
+            <div className="flex items-center gap-2 mb-4">
+              {editingArtId ? (
+                <Pencil className="w-5 h-5 text-blue-600" />
+              ) : (
+                <PenTool className="w-5 h-5 text-blue-600" />
+              )}
+              <h2 className="text-lg font-bold text-slate-900">
+                {editingArtId ? "Edit Article About Sir" : "Publish New Article About Sir"}
+              </h2>
+            </div>
 
             <form onSubmit={handleSaveArticle} className="space-y-4">
               <div>
@@ -605,7 +634,8 @@ export default function AdminAboutManagementPage() {
               </div>
 
               <div className="flex gap-2">
-                <button type="submit" className="btn-blue flex-1 py-3 text-xs font-bold shadow">
+                <button type="submit" className="btn-blue flex-1 py-3 text-xs font-bold shadow-sm inline-flex items-center justify-center gap-2">
+                  <CheckCircle2 className="w-4 h-4" />
                   {editingArtId ? "Update Article" : "Publish Article to About Page"}
                 </button>
                 {editingArtId && (
@@ -627,11 +657,14 @@ export default function AdminAboutManagementPage() {
 
           {/* Existing List */}
           <div className="md:col-span-6 glass-card p-6 rounded-2xl border border-slate-200">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">📰 Published Articles ({articles.length})</h2>
+            <div className="flex items-center gap-2 mb-4">
+              <BookOpen className="w-5 h-5 text-blue-600" />
+              <h2 className="text-lg font-bold text-slate-900">Published Articles ({articles.length})</h2>
+            </div>
 
             <div className="space-y-4">
               {articles.map((art) => (
-                <div key={art.id} className="p-4 rounded-xl bg-blue-50 border border-blue-100 space-y-2">
+                <div key={art.id} className="p-4 rounded-xl bg-blue-50/60 border border-blue-100 space-y-2">
                   <div className="flex items-center justify-between">
                     <span className="badge badge-brand">{art.category}</span>
                     <span className="text-[10px] text-slate-500">{art.publishedDate} • {art.readTime}</span>
@@ -642,18 +675,20 @@ export default function AdminAboutManagementPage() {
 
                   <div className="pt-2 border-t border-slate-200 flex items-center justify-between text-xs">
                     <span className="text-[10px] text-slate-500 font-semibold">By {art.author}</span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-3">
                       <button
                         onClick={() => handleEditArticle(art)}
-                        className="text-xs font-bold text-blue-600 hover:underline"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-700 transition"
                       >
-                        ✏️ Edit
+                        <Pencil className="w-3.5 h-3.5" />
+                        Edit
                       </button>
                       <button
                         onClick={() => handleDeleteArticle(art.id)}
-                        className="text-xs font-bold text-red-600 hover:underline"
+                        className="inline-flex items-center gap-1 text-xs font-semibold text-red-600 hover:text-red-700 transition"
                       >
-                        🗑️ Delete
+                        <Trash2 className="w-3.5 h-3.5" />
+                        Delete
                       </button>
                     </div>
                   </div>

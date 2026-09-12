@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { StudyStore } from "@/lib/store";
 import { PaymentItem, SubjectItem } from "@/lib/mockData";
 import Logo from "@/components/Logo";
+import { Download, Printer, BarChart3, FileSpreadsheet } from "lucide-react";
 
 export default function AdminReportsPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
@@ -42,17 +43,22 @@ export default function AdminReportsPage() {
       {/* Header Controls (Hidden on Print) */}
       <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4 print:hidden">
         <div>
-          <span className="badge badge-brand mb-1">Financial & Enrollment Analytics</span>
+          <span className="badge badge-brand mb-1 inline-flex items-center gap-1">
+            <BarChart3 className="w-3 h-3" />
+            Financial & Enrollment Analytics
+          </span>
           <h1 className="text-2xl font-bold text-slate-900">Academy Reports & Export</h1>
           <p className="text-xs text-slate-500">Generate printable statements, student registration lists, and financial summaries.</p>
         </div>
 
-        <div className="flex gap-3">
-          <button onClick={handleExportCSV} className="btn-secondary text-xs py-2 px-4">
-            📥 Export CSV
+        <div className="flex items-center gap-3">
+          <button onClick={handleExportCSV} className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5 shadow-sm">
+            <Download className="w-3.5 h-3.5 text-slate-600" />
+            Export CSV
           </button>
-          <button onClick={handlePrint} className="btn-blue text-xs py-2 px-4">
-            🖨️ Print Report
+          <button onClick={handlePrint} className="btn-blue text-xs py-2 px-4 inline-flex items-center gap-1.5 shadow-sm">
+            <Printer className="w-3.5 h-3.5" />
+            Print Report
           </button>
         </div>
       </div>

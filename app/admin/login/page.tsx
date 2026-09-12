@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { StudyStore } from "@/lib/store";
 import Logo from "@/components/Logo";
+import { ShieldCheck, GraduationCap, ArrowLeft, Zap, AlertCircle, Lock, Mail } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -53,11 +54,13 @@ export default function AdminLoginPage() {
       <div className="w-full max-w-md p-8 rounded-3xl bg-slate-800/90 backdrop-blur-xl shadow-2xl border border-slate-700 relative z-10">
         
         <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="text-xs text-slate-400 hover:text-white transition flex items-center gap-1">
-            ← Back to Home
+          <Link href="/" className="text-xs text-slate-400 hover:text-white transition inline-flex items-center gap-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            Back to Home
           </Link>
-          <Link href="/login" className="text-xs text-blue-400 hover:underline">
-            🎓 Student Portal
+          <Link href="/login" className="text-xs text-blue-400 hover:underline inline-flex items-center gap-1.5">
+            <GraduationCap className="w-3.5 h-3.5" />
+            Student Portal
           </Link>
         </div>
 
@@ -66,7 +69,8 @@ export default function AdminLoginPage() {
             <Logo size="md" href="/" />
           </div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/30 text-blue-400 text-xs font-semibold mb-2">
-            🛡️ Restricted Portal
+            <ShieldCheck className="w-3.5 h-3.5" />
+            Restricted Portal
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Sign In</h1>
           <p className="text-slate-400 text-xs mt-1">Authorized Academy Director access only</p>
@@ -75,16 +79,20 @@ export default function AdminLoginPage() {
         {/* Quick Admin Demo Button */}
         <div className="mb-6 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20">
           <div className="flex items-center justify-between mb-2 text-xs text-blue-300 font-semibold">
-            <span>⚡ 1-Click Director Access</span>
+            <span className="inline-flex items-center gap-1">
+              <Zap className="w-3 h-3 text-amber-400" />
+              1-Click Director Access
+            </span>
             <span className="text-[10px] text-slate-400">Nafees Mohamed</span>
           </div>
           <button
             type="button"
             onClick={handleDemoAdminLogin}
             disabled={loading}
-            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition flex items-center justify-center gap-2"
+            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition inline-flex items-center justify-center gap-2"
           >
-            🛡️ Log In as Director (Nafees)
+            <ShieldCheck className="w-4 h-4" />
+            Log In as Director (Nafees)
           </button>
         </div>
 
@@ -93,33 +101,39 @@ export default function AdminLoginPage() {
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
               Admin Email Address
             </label>
-            <input
-              type="email"
-              required
-              placeholder="nfsmhdlms@gmail.com"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
+            <div className="relative">
+              <Mail className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                required
+                placeholder="nfsmhdlms@gmail.com"
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </div>
           </div>
 
           <div>
             <label className="block text-xs font-semibold text-slate-300 uppercase tracking-wider mb-1.5">
               Admin Password
             </label>
-            <input
-              type="password"
-              required
-              placeholder="••••••••"
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
+            <div className="relative">
+              <Lock className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                required
+                placeholder="••••••••"
+                className="w-full bg-slate-900 border border-slate-700 rounded-xl pl-10 pr-4 py-3 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
           </div>
 
           {error && (
             <div className="p-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-xs flex items-center gap-2">
-              <span>⚠️</span>
+              <AlertCircle className="w-4 h-4 text-red-400 flex-shrink-0" />
               <span>{error}</span>
             </div>
           )}
@@ -127,8 +141,9 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-brand-600 text-white font-bold text-sm shadow-xl shadow-blue-600/30 hover:opacity-95 transition mt-2"
+            className="w-full py-3.5 rounded-xl bg-gradient-to-r from-blue-600 to-brand-600 text-white font-bold text-sm shadow-xl shadow-blue-600/30 hover:opacity-95 transition mt-2 inline-flex items-center justify-center gap-2"
           >
+            <ShieldCheck className="w-4 h-4" />
             {loading ? "Authenticating Admin..." : "Sign In to Admin Dashboard"}
           </button>
         </form>

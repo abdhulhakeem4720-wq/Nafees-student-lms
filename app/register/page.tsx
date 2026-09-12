@@ -6,6 +6,18 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { StudyStore } from "@/lib/store";
 import Logo from "@/components/Logo";
+import { 
+  User, 
+  Mail, 
+  Phone, 
+  School, 
+  Lock, 
+  ArrowLeft, 
+  AlertCircle, 
+  GraduationCap, 
+  CheckCircle2,
+  Sparkles
+} from "lucide-react";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -14,6 +26,9 @@ export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
+  const [school, setSchool] = useState("");
+  const [medium, setMedium] = useState<"English" | "Sinhala" | "Tamil">("English");
   const [grade, setGrade] = useState<number>(9);
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -27,7 +42,7 @@ export default function RegisterPage() {
         body: JSON.stringify(studentDetails)
       });
     } catch (err) {
-      console.warn("Admin notification email trigger completed:", err);
+      console.warn("Admin notification email completed:", err);
     }
   }
 
@@ -52,13 +67,20 @@ export default function RegisterPage() {
             email,
             password,
             options: {
-              data: { full_name: fullName, phone, grade: grade.toString(), role: "student" }
+              data: {
+                full_name: fullName,
+                phone,
+                parent_phone: parentPhone,
+                school,
+                medium,
+                grade: grade.toString(),
+                role: "student"
+              }
             }
           });
 
           if (signUpError) {
             console.warn("Supabase auth signUp error:", signUpError.message);
-            // If network fetch failed, don't block registration completely
             if (!signUpError.message.includes("Failed to fetch") && !signUpError.message.includes("fetch failed")) {
               setError(signUpError.message);
               setLoading(false);
@@ -70,11 +92,19 @@ export default function RegisterPage() {
         }
       }
 
-      const newUser = StudyStore.registerStudent({
+      const gradeFormatted = String(grade).padStart(2, "0");
+      const randomSeq = Math.floor(100 + Math.random() * 900);
+      const studentIndex = `SWN-2026-G${gradeFormatted}-${randomSeq}`;
+
+      StudyStore.registerStudent({
         email,
         fullName,
         phone,
+        parentPhone,
+        school,
+        medium,
         grade,
+        studentIndex,
         role: "student",
         registeredSubjects: [`sub-sci-${grade}`, `sub-math-${grade}`],
         password
@@ -91,17 +121,18 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
-      <div className="w-full max-w-xl p-8 rounded-3xl glass-panel shadow-2xl border border-slate-200 relative z-10">
+    <main className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
+      <div className="w-full max-w-2xl p-6 sm:p-10 rounded-3xl glass-panel shadow-2xl border border-slate-200 relative z-10 my-8 bg-white">
         
         <div className="flex items-center justify-between mb-6">
-          <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 transition flex items-center gap-1">
-            ← Back to Home
+          <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 font-semibold transition flex items-center gap-1.5">
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Home</span>
           </Link>
           <span className="text-xs text-slate-500">
-            Already have an account?{" "}
-            <Link href="/login" className="text-brand-600 font-semibold hover:underline">
-              Log in
+            Already enrolled?{" "}
+            <Link href="/login" className="text-blue-600 font-bold hover:underline">
+              Student Sign In
             </Link>
           </span>
         </div>
@@ -110,62 +141,139 @@ export default function RegisterPage() {
           <div className="mb-4">
             <Logo size="md" href="/" />
           </div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Create Your Student Account</h1>
-          <p className="text-slate-500 text-xs mt-1">Enroll for Science & Mathematics (Grades 6–11)</p>
+          <span className="badge badge-blue mb-2 text-[10px]">2026 Academic Batch Enrollment</span>
+          <h1 className="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">
+            Official Student Registration
+          </h1>
+          <p className="text-slate-500 text-xs mt-1 max-w-md">
+            Register your student profile for Grade 6–11 Science & Mathematics with Sir Nafees Mohamed.
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
+          
           <div>
-            <label className="label">Full Name</label>
-            <input
-              type="text"
-              required
-              placeholder="e.g. Kasun Fernando"
-              className="glass-input w-full"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-            />
+            <label className="label">Student Full Name *</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <User className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                required
+                placeholder="e.g. Kasun Dilshan Fernando"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                value={fullName}
+                onChange={(e) => setFullName(e.target.value)}
+              />
+            </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="label">Email Address</label>
-              <input
-                type="email"
-                required
-                placeholder="student@example.com"
-                className="glass-input w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
+              <label className="label">Student Email Address *</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Mail className="w-4 h-4" />
+                </div>
+                <input
+                  type="email"
+                  required
+                  placeholder="student@example.com"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
+              </div>
             </div>
 
             <div>
-              <label className="label">Phone / WhatsApp Number</label>
-              <input
-                type="tel"
-                required
-                placeholder="0771234567"
-                className="glass-input w-full"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
-              />
+              <label className="label">Student WhatsApp Mobile *</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <input
+                  type="tel"
+                  required
+                  placeholder="0771234567"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
+              </div>
             </div>
           </div>
 
-          {/* Grade Selector Pills */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="label">Parent / Guardian Phone *</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <Phone className="w-4 h-4" />
+                </div>
+                <input
+                  type="tel"
+                  required
+                  placeholder="0719876543"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                  value={parentPhone}
+                  onChange={(e) => setParentPhone(e.target.value)}
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="label">Current School Name</label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                  <School className="w-4 h-4" />
+                </div>
+                <input
+                  type="text"
+                  placeholder="e.g. Visakha Vidyalaya / Ananda College"
+                  className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                  value={school}
+                  onChange={(e) => setSchool(e.target.value)}
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Medium Selector */}
           <div>
-            <label className="label">Select Grade Level</label>
+            <label className="label">Medium of Study</label>
+            <div className="grid grid-cols-3 gap-2">
+              {(["English", "Sinhala", "Tamil"] as const).map((med) => (
+                <button
+                  key={med}
+                  type="button"
+                  onClick={() => setMedium(med)}
+                  className={`py-2.5 rounded-xl text-xs font-bold transition-all border ${
+                    medium === med
+                      ? "bg-blue-600 border-blue-600 text-white shadow-sm"
+                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
+                  }`}
+                >
+                  {med} Medium
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Grade Selector */}
+          <div>
+            <label className="label">Enrolling Grade Level</label>
             <div className="grid grid-cols-3 sm:grid-cols-6 gap-2">
               {[6, 7, 8, 9, 10, 11].map((g) => (
                 <button
                   key={g}
                   type="button"
                   onClick={() => setGrade(g)}
-                  className={`py-3 rounded-xl text-xs font-bold transition-all border ${
+                  className={`py-3 rounded-2xl text-xs font-bold transition-all border ${
                     grade === g
-                      ? "bg-brand-600 border-brand-400 text-white shadow-lg shadow-brand-500/30 scale-[1.03]"
-                      : "bg-white border-slate-200 text-slate-600 hover:text-slate-900 hover:bg-slate-50"
+                      ? "bg-blue-600 border-blue-600 text-white shadow-md scale-[1.02]"
+                      : "bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100"
                   }`}
                 >
                   Grade {g}
@@ -175,37 +283,48 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label className="label">Password</label>
-            <input
-              type="password"
-              required
-              minLength={8}
-              placeholder="Min 8 chars, uppercase, lowercase, number, special char"
-              className="glass-input w-full"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <p className="text-[10px] text-slate-400 mt-1">Must include uppercase, lowercase, number, and special character.</p>
+            <label className="label">Create Portal Password *</label>
+            <div className="relative">
+              <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                <Lock className="w-4 h-4" />
+              </div>
+              <input
+                type="password"
+                required
+                placeholder="At least 8 characters (Upper, Lower, Number, Symbol)"
+                className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <p className="text-[11px] text-slate-500 mt-1">
+              Must include uppercase, lowercase, number, and special character (e.g. Student@2026).
+            </p>
           </div>
 
           {error && (
-            <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs">
-              ⚠️ {error}
+            <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2 font-semibold">
+              <AlertCircle className="w-4 h-4 flex-shrink-0" />
+              <span>{error}</span>
             </div>
           )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-blue w-full py-3.5 text-sm font-bold mt-4"
-          >
-            {loading ? "Creating Account & Notifying Admin..." : "Complete Registration & Launch Hub"}
-          </button>
+          <div className="pt-2">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/25 transition-all"
+            >
+              {loading ? "Registering Student Profile..." : "Complete Official Registration"}
+            </button>
+          </div>
+
+          <p className="text-center text-[11px] text-slate-400">
+            By registering, you agree to comply with Study With Nafees academic policies and code of conduct.
+          </p>
+
         </form>
 
-        <p className="text-center text-[11px] text-slate-400 mt-6">
-          By registering, your profile is recorded and an alert is automatically sent to Nafees.
-        </p>
       </div>
     </main>
   );

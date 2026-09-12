@@ -2,6 +2,21 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import {
+  Database,
+  RefreshCw,
+  CheckCircle2,
+  AlertTriangle,
+  XCircle,
+  Key,
+  ShieldCheck,
+  Activity,
+  HelpCircle,
+  Copy,
+  Check,
+  ExternalLink,
+  Server
+} from "lucide-react";
 
 interface SupabaseStatus {
   configured: boolean;
@@ -101,8 +116,9 @@ on conflict (name, grade) do nothing;`;
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
-            ⚡ Supabase Database Control
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200 text-blue-700 text-xs font-semibold mb-2">
+            <Database className="w-3.5 h-3.5" />
+            Supabase Database Control
           </div>
           <h1 className="text-2xl font-extrabold text-slate-900">Supabase Connection Manager</h1>
           <p className="text-xs text-slate-500 mt-1">
@@ -113,14 +129,15 @@ on conflict (name, grade) do nothing;`;
         <button
           onClick={checkStatus}
           disabled={loading}
-          className="btn-primary text-xs py-2.5 px-4 flex items-center justify-center gap-2 self-start md:self-auto"
+          className="btn-primary text-xs py-2.5 px-4 inline-flex items-center justify-center gap-2 self-start md:self-auto shadow-sm"
         >
-          {loading ? "Checking Connection..." : "🔄 Re-test Connection"}
+          <RefreshCw className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`} />
+          {loading ? "Checking Connection..." : "Re-test Connection"}
         </button>
       </div>
 
       {/* Main Status Banner */}
-      <div className={`p-6 rounded-3xl border shadow-lg ${
+      <div className={`p-6 rounded-3xl border shadow-sm ${
         status?.connected && status?.hasCoreTables
           ? "bg-emerald-50 border-emerald-200 text-emerald-900"
           : status?.configured
@@ -128,8 +145,14 @@ on conflict (name, grade) do nothing;`;
           : "bg-red-50 border-red-200 text-red-900"
       }`}>
         <div className="flex items-start gap-4">
-          <div className="text-4xl">
-            {status?.connected && status?.hasCoreTables ? "✅" : status?.configured ? "⚠️" : "❌"}
+          <div className="mt-0.5">
+            {status?.connected && status?.hasCoreTables ? (
+              <CheckCircle2 className="w-8 h-8 text-emerald-600" />
+            ) : status?.configured ? (
+              <AlertTriangle className="w-8 h-8 text-amber-600" />
+            ) : (
+              <XCircle className="w-8 h-8 text-red-600" />
+            )}
           </div>
           <div className="flex-1">
             <h2 className="text-lg font-bold">
@@ -158,7 +181,17 @@ on conflict (name, grade) do nothing;`;
         <div className="glass-card p-5 rounded-2xl border border-slate-200">
           <span className="text-xs text-slate-500 font-semibold block mb-1">Configuration State</span>
           <div className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>{status?.configured ? "🟢 Configured" : "🔴 Missing Config"}</span>
+            {status?.configured ? (
+              <>
+                <CheckCircle2 className="w-4 h-4 text-emerald-600" />
+                <span className="text-emerald-700 text-sm">Configured</span>
+              </>
+            ) : (
+              <>
+                <XCircle className="w-4 h-4 text-red-600" />
+                <span className="text-red-700 text-sm">Missing Config</span>
+              </>
+            )}
           </div>
           <span className="text-[11px] text-slate-500 mt-1 block">.env.local settings</span>
         </div>
@@ -166,7 +199,17 @@ on conflict (name, grade) do nothing;`;
         <div className="glass-card p-5 rounded-2xl border border-slate-200">
           <span className="text-xs text-slate-500 font-semibold block mb-1">Anon API Key</span>
           <div className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>{status?.hasAnonKey ? "🔑 Present" : "❌ Missing"}</span>
+            {status?.hasAnonKey ? (
+              <>
+                <Key className="w-4 h-4 text-emerald-600" />
+                <span className="text-emerald-700 text-sm">Present</span>
+              </>
+            ) : (
+              <>
+                <XCircle className="w-4 h-4 text-red-600" />
+                <span className="text-red-700 text-sm">Missing</span>
+              </>
+            )}
           </div>
           <span className="text-[11px] text-slate-500 mt-1 block">NEXT_PUBLIC_SUPABASE_ANON_KEY</span>
         </div>
@@ -174,7 +217,17 @@ on conflict (name, grade) do nothing;`;
         <div className="glass-card p-5 rounded-2xl border border-slate-200">
           <span className="text-xs text-slate-500 font-semibold block mb-1">Service Role Key</span>
           <div className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <span>{status?.hasServiceRoleKey ? "🔐 Present" : "⚠️ Optional"}</span>
+            {status?.hasServiceRoleKey ? (
+              <>
+                <ShieldCheck className="w-4 h-4 text-emerald-600" />
+                <span className="text-emerald-700 text-sm">Present</span>
+              </>
+            ) : (
+              <>
+                <AlertTriangle className="w-4 h-4 text-amber-600" />
+                <span className="text-amber-700 text-sm">Optional</span>
+              </>
+            )}
           </div>
           <span className="text-[11px] text-slate-500 mt-1 block">SUPABASE_SERVICE_ROLE_KEY</span>
         </div>
@@ -184,7 +237,8 @@ on conflict (name, grade) do nothing;`;
       {status?.tables && Object.keys(status.tables).length > 0 && (
         <div className="glass-panel p-6 rounded-3xl border border-slate-200 space-y-4">
           <h3 className="font-bold text-slate-900 text-sm flex items-center gap-2">
-            📊 Database Table Health Inspection
+            <Activity className="w-4 h-4 text-blue-600" />
+            Database Table Health Inspection
           </h3>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-3">
             {Object.entries(status.tables).map(([table, info]) => (
@@ -197,8 +251,18 @@ on conflict (name, grade) do nothing;`;
                 }`}
               >
                 <span className="font-mono font-semibold">{table}</span>
-                <span className="font-bold">
-                  {info.exists ? `✅ ${info.count ?? 0} rows` : "❌ Missing"}
+                <span className="font-bold inline-flex items-center gap-1">
+                  {info.exists ? (
+                    <>
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                      {info.count ?? 0} rows
+                    </>
+                  ) : (
+                    <>
+                      <XCircle className="w-3.5 h-3.5 text-red-600" />
+                      Missing
+                    </>
+                  )}
                 </span>
               </div>
             ))}
@@ -209,14 +273,15 @@ on conflict (name, grade) do nothing;`;
       {/* Setup Guide Step-by-Step */}
       <div className="glass-panel p-6 rounded-3xl border border-slate-200 space-y-4">
         <h3 className="font-bold text-slate-900 text-base flex items-center gap-2">
-          🛠️ How to Connect Your Supabase Project
+          <HelpCircle className="w-5 h-5 text-blue-600" />
+          How to Connect Your Supabase Project
         </h3>
 
         <div className="space-y-4 text-xs text-slate-700">
           <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
             <div className="font-bold text-slate-900 text-sm">Step 1: Get your Supabase Project API Keys</div>
             <ol className="list-decimal list-inside space-y-1 text-slate-600">
-              <li>Log in to your Supabase account at <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="text-blue-600 font-semibold underline">https://supabase.com/dashboard</a></li>
+              <li>Log in to your Supabase account at <a href="https://supabase.com/dashboard" target="_blank" rel="noreferrer" className="text-blue-600 font-semibold underline inline-flex items-center gap-0.5">https://supabase.com/dashboard <ExternalLink className="w-3 h-3" /></a></li>
               <li>Select your project (or create a new free project)</li>
               <li>Go to <strong>Project Settings → API</strong></li>
               <li>Copy your <strong>Project URL</strong> and <strong>anon / public API key</strong></li>
@@ -238,9 +303,19 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...`}
               <div className="font-bold text-slate-900 text-sm">Step 3: Run Database Schema SQL</div>
               <button
                 onClick={handleCopySchema}
-                className="btn-secondary text-[11px] py-1 px-3"
+                className="btn-secondary text-[11px] py-1.5 px-3 inline-flex items-center gap-1.5"
               >
-                {copySuccess ? "✅ Copied SQL!" : "📋 Copy Schema SQL"}
+                {copySuccess ? (
+                  <>
+                    <Check className="w-3.5 h-3.5 text-emerald-600" />
+                    Copied SQL!
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-3.5 h-3.5" />
+                    Copy Schema SQL
+                  </>
+                )}
               </button>
             </div>
             <p className="text-slate-600">
@@ -249,7 +324,6 @@ SUPABASE_SERVICE_ROLE_KEY=eyJhbGciOi...`}
           </div>
         </div>
       </div>
-
     </div>
   );
 }

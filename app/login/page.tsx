@@ -6,6 +6,18 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { StudyStore } from "@/lib/store";
 import Logo from "@/components/Logo";
+import { 
+  Atom, 
+  Calculator, 
+  FileCheck, 
+  CreditCard, 
+  ArrowLeft, 
+  Shield, 
+  AlertCircle, 
+  Lock, 
+  Mail,
+  GraduationCap
+} from "lucide-react";
 
 export default function StudentLoginPage() {
   const router = useRouter();
@@ -15,15 +27,6 @@ export default function StudentLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  function handleDemoStudentLogin() {
-    setLoading(true);
-    setError(null);
-    setTimeout(() => {
-      StudyStore.loginDemo("student");
-      window.location.href = "/dashboard";
-    }, 400);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -91,111 +94,110 @@ export default function StudentLoginPage() {
   }
 
   return (
-    <main className="min-h-screen relative flex items-center justify-center p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
-      <div className="w-full max-w-4xl grid md:grid-cols-12 rounded-3xl overflow-hidden glass-panel shadow-2xl border border-slate-200 relative z-10">
+    <main className="min-h-screen relative flex items-center justify-center p-4 sm:p-6 overflow-hidden bg-slate-50 bg-study-grid bg-study-glow">
+      <div className="w-full max-w-4xl grid md:grid-cols-12 rounded-3xl overflow-hidden glass-panel shadow-2xl border border-slate-200 relative z-10 bg-white">
         
         {/* Left Side: Study Hub Info */}
-        <div className="md:col-span-5 p-8 bg-gradient-to-br from-blue-500/10 via-white to-blue-50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between relative overflow-hidden">
+        <div className="md:col-span-5 p-8 bg-gradient-to-br from-blue-50/80 via-white to-indigo-50/50 border-b md:border-b-0 md:border-r border-slate-200 flex flex-col justify-between">
           <div>
             <div className="mb-6">
               <Logo size="lg" href="/" />
             </div>
 
-            <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight leading-tight mb-3">
+            <h1 className="text-2xl font-black text-slate-900 tracking-tight leading-tight mb-2">
               Student Learning Hub
             </h1>
             <p className="text-slate-600 text-xs leading-relaxed mb-6">
               Access your Grade 6–11 Science and Mathematics subjects, view lecture materials, complete online quizzes, and track slip approvals.
             </p>
 
-            <div className="space-y-3">
+            <div className="space-y-2.5">
               {[
-                { icon: "⚛️", text: "Interactive Science & Physics Labs" },
-                { icon: "📐", text: "Maths Formula & Algebra Drills" },
-                { icon: "📝", text: "Instant Online Exam auto-grading" },
-                { icon: "💳", text: "Simple Slip Upload & Seat Verification" }
-              ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3 p-2.5 rounded-xl bg-white border border-slate-200 text-xs font-medium text-slate-700">
-                  <span className="text-base">{item.icon}</span>
-                  <span>{item.text}</span>
-                </div>
-              ))}
+                { icon: Atom, text: "O/L Physics & Chemistry Theory Drills" },
+                { icon: Calculator, text: "Algebra, Geometry & Logarithms Mastery" },
+                { icon: FileCheck, text: "Timed Chapter Quizzes with Explanations" },
+                { icon: CreditCard, text: "Simple Bank Slip Verification & Receipts" }
+              ].map((item, idx) => {
+                const Icon = item.icon;
+                return (
+                  <div key={idx} className="flex items-center gap-3 p-3 rounded-2xl bg-white border border-slate-200 text-xs font-semibold text-slate-800 shadow-sm">
+                    <div className="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0">
+                      <Icon className="w-4 h-4" />
+                    </div>
+                    <span>{item.text}</span>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
           <div className="mt-8 pt-6 border-t border-slate-200">
-            <div className="p-3.5 rounded-xl bg-blue-500/10 border border-blue-500/20 text-xs text-blue-700 italic">
-              "Education is the most powerful weapon which you can use to change the world."
-              <div className="font-semibold not-italic text-right text-blue-600 mt-1">— STUDY WITH NAFEES</div>
+            <div className="p-4 rounded-2xl bg-blue-50/80 border border-blue-200 text-xs text-blue-900 leading-relaxed font-medium">
+              "Mastering Science and Mathematics is about building clear conceptual foundations step-by-step."
+              <div className="font-bold text-blue-700 mt-1.5">— Sir Nafees Mohamed</div>
             </div>
           </div>
         </div>
 
         {/* Right Side: Student Login Form */}
-        <div className="md:col-span-7 p-8 flex flex-col justify-between">
+        <div className="md:col-span-7 p-8 sm:p-10 flex flex-col justify-between">
           <div>
-            <div className="flex items-center justify-between mb-6">
-              <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 transition flex items-center gap-1">
-                ← Back to Home
+            <div className="flex items-center justify-between mb-8">
+              <Link href="/" className="text-xs text-slate-500 hover:text-slate-900 font-semibold transition flex items-center gap-1.5">
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Home</span>
               </Link>
-              <Link href="/admin/login" className="text-xs text-blue-600 font-semibold hover:underline flex items-center gap-1">
-                🛡️ Admin Portal
+              <Link href="/admin/login" className="text-xs text-slate-500 hover:text-blue-700 font-semibold transition flex items-center gap-1">
+                <Shield className="w-3.5 h-3.5" />
+                <span>Admin Portal</span>
               </Link>
             </div>
 
             <div className="mb-6">
-              <span className="badge badge-blue mb-2">Student Access</span>
-              <h2 className="text-2xl font-bold text-slate-900">Student Sign In</h2>
-              <p className="text-xs text-slate-500 mt-1">Enter your student account details to access your courses.</p>
-            </div>
-
-            {/* Quick Demo Button */}
-            <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-blue-500/10 to-blue-400/10 border border-blue-500/20">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-blue-600 uppercase tracking-wider">
-                  ⚡ 1-Click Student Demo
-                </span>
-                <span className="text-[10px] text-slate-500">Grade 9 Demo</span>
-              </div>
-              <button
-                type="button"
-                onClick={handleDemoStudentLogin}
-                disabled={loading}
-                className="btn-blue text-xs py-2.5 w-full mt-1"
-              >
-                🎓 Log In as Demo Student
-              </button>
+              <span className="badge badge-blue mb-2 text-[10px]">Student Access</span>
+              <h2 className="text-2xl font-black text-slate-900">Sign In to Student Account</h2>
+              <p className="text-xs text-slate-500 mt-1">Enter your registered email address and password to access your courses.</p>
             </div>
 
             {/* Login Form */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="label">Student Email Address</label>
-                <input
-                  type="email"
-                  required
-                  placeholder="student@study.edu"
-                  className="glass-input w-full"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Mail className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="email"
+                    required
+                    placeholder="student@study.edu"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                </div>
               </div>
 
               <div>
                 <label className="label">Password</label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••"
-                  className="glass-input w-full"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+                    <Lock className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="password"
+                    required
+                    placeholder="••••••••"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-50 hover:bg-slate-100/70 focus:bg-white border border-slate-200 focus:border-blue-500 rounded-2xl text-xs sm:text-sm text-slate-900 outline-none transition"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                </div>
               </div>
 
               {error && (
-                <div className="p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2">
-                  <span>⚠️</span>
+                <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs flex items-center gap-2 font-semibold">
+                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
                   <span>{error}</span>
                 </div>
               )}
@@ -203,18 +205,23 @@ export default function StudentLoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="btn-primary w-full py-3 text-sm font-bold mt-2"
+                className="w-full py-3.5 bg-blue-600 hover:bg-blue-700 active:scale-[0.98] text-white rounded-2xl text-xs sm:text-sm font-bold shadow-lg shadow-blue-500/25 transition-all mt-2"
               >
-                {loading ? "Logging in..." : "Sign In to Student Dashboard"}
+                {loading ? "Signing in..." : "Sign In to Student Dashboard"}
               </button>
             </form>
           </div>
 
-          <div className="mt-6 text-center text-xs text-slate-500 pt-4 border-t border-slate-200">
-            Need an account?{" "}
-            <Link href="/register" className="text-brand-600 font-semibold hover:underline">
-              Register Student Account
-            </Link>
+          <div className="mt-8 text-center text-xs text-slate-500 pt-5 border-t border-slate-100 space-y-2">
+            <div>
+              New student?{" "}
+              <Link href="/register" className="text-blue-600 font-bold hover:underline">
+                Register Student Account
+              </Link>
+            </div>
+            <div className="text-[11px] text-slate-400">
+              Demo evaluation credentials: <span className="font-mono text-slate-600">student@study.edu</span> / <span className="font-mono text-slate-600">Student@123</span>
+            </div>
           </div>
         </div>
 

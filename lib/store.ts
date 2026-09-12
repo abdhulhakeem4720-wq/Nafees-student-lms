@@ -15,7 +15,8 @@ import {
   INITIAL_MESSAGES,
   INITIAL_ABOUT_SIR,
   INITIAL_PORTFOLIOS,
-  INITIAL_ARTICLES
+  INITIAL_ARTICLES,
+  INITIAL_STUDENTS
 } from "./mockData";
 
 export const MOCK_STUDENT_USER: UserProfile = {
@@ -26,7 +27,11 @@ export const MOCK_STUDENT_USER: UserProfile = {
   grade: 9,
   role: "student",
   registeredSubjects: ["sub-sci-9", "sub-math-9"],
-  password: "Student@123"
+  password: "Student@123",
+  school: "Visakha Vidyalaya, Colombo",
+  medium: "English",
+  parentPhone: "0712345678",
+  studentIndex: "SWN-2026-G09-082"
 };
 
 export const MOCK_ADMIN_USER: UserProfile = {
@@ -216,20 +221,92 @@ export const StudyStore = {
 
   // Registered Users
   getRegisteredUsers(): UserProfile[] {
-    return getStorageItem<UserProfile[]>(STORAGE_KEYS.USERS, []);
+    const cached = getStorageItem<UserProfile[]>(STORAGE_KEYS.USERS, INITIAL_STUDENTS);
+    if (!cached || cached.length === 0) {
+      setStorageItem(STORAGE_KEYS.USERS, INITIAL_STUDENTS);
+      return INITIAL_STUDENTS;
+    }
+    return cached;
   },
 
-  registerStudent(user: Omit<UserProfile, "id"> & { password: string }): UserProfile {
+  registerStudent(user: Omit<UserProfile, "id"> & { password?: string }): UserProfile {
     const users = this.getRegisteredUsers();
-    const exists = users.find((u) => u.email === user.email);
+    const exists = users.find((u) => u.email.toLowerCase() === user.email.toLowerCase());
     if (exists) {
       throw new Error("Email already registered");
     }
-    const newUser = { ...user, id: `stu-${Date.now()}` };
+    const gradeFormatted = String(user.grade || 9).padStart(2, "0");
+    const randomSeq = Math.floor(100 + Math.random() * 900);
+    const studentIndex = user.studentIndex || `SWN-2026-G${gradeFormatted}-${randomSeq}`;
+
+    const newUser: UserProfile = {
+      ...user,
+      id: `stu-${Date.now()}`,
+      studentIndex,
+      status: user.status || "Active"
+    };
     users.push(newUser);
     setStorageItem(STORAGE_KEYS.USERS, users);
     this.setCurrentUser(newUser);
     return newUser;
+  },
+
+  addStudentByAdmin(student: Omit<UserProfile, "id">): UserProfile {
+    const users = this.getRegisteredUsers();
+    const exists = users.find((u) => u.email.toLowerCase() === student.email.toLowerCase());
+    if (exists) {
+      throw new Error("A student with this email address already exists.");
+    }
+    const gradeFormatted = String(student.grade || 9).padStart(2, "0");
+    const randomSeq = Math.floor(100 + Math.random() * 900);
+    const studentIndex = student.studentIndex || `SWN-2026-G${gradeFormatted}-${randomSeq}`;
+
+    const newStudent: UserProfile = {
+      ...student,
+      id: `stu-${Date.now()}`,
+      studentIndex,
+      status: student.status || "Active",
+      role: "student"
+    };
+    const updated = [newStudent, ...users];
+    setStorageItem(STORAGE_KEYS.USERS, updated);
+    return newStudent;
+  },
+
+  updateStudent(id: string, updatedData: Partial<UserProfile>): UserProfile[] {
+    const users = this.getRegisteredUsers();
+    const updated = users.map((stu) => {
+      if (stu.id === id) {
+        return {
+          ...stu,
+          ...updatedData
+        };
+      }
+      return stu;
+    });
+    setStorageItem(STORAGE_KEYS.USERS, updated);
+
+    // If active session belongs to this student, sync session too
+    const currentSession = this.getCurrentUser();
+    if (currentSession && currentSession.id === id) {
+      this.setCurrentUser({ ...currentSession, ...updatedData });
+    }
+
+    return updated;
+  },
+
+  deleteStudent(id: string): UserProfile[] {
+    const users = this.getRegisteredUsers();
+    const updated = users.filter((stu) => stu.id !== id);
+    setStorageItem(STORAGE_KEYS.USERS, updated);
+
+    // If active session belongs to this student, log them out
+    const currentSession = this.getCurrentUser();
+    if (currentSession && currentSession.id === id) {
+      this.setCurrentUser(null);
+    }
+
+    return updated;
   },
 
   validateAdminCredentials(email: string, password: string): UserProfile | null {
@@ -280,7 +357,17 @@ export const StudyStore = {
 
   // Subjects
   getSubjects(): SubjectItem[] {
-    return getStorageItem<SubjectItem[]>(STORAGE_KEYS.SUBJECTS, INITIAL_SUBJECTS);
+    const cached = getStorageItem<SubjectItem[]>(STORAGE_KEYS.SUBJECTS, INITIAL_SUBJECTS);
+    const initialMap = new Map(INITIAL_SUBJECTS.map((s) => [s.id, s]));
+    const merged = cached.map((s) => {
+      const init = initialMap.get(s.id);
+      return init ? { ...init, enrolledStudentsCount: s.enrolledStudentsCount || init.enrolledStudentsCount } : s;
+    });
+    const cachedIds = new Set(cached.map((s) => s.id));
+    for (const init of INITIAL_SUBJECTS) {
+      if (!cachedIds.has(init.id)) merged.push(init);
+    }
+    return merged;
   },
 
   toggleSubjectRegistration(subjectId: string): { user: UserProfile | null; error?: string } {
@@ -316,7 +403,25 @@ export const StudyStore = {
 
   // Materials
   getMaterials(): MaterialItem[] {
-    return getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
+    const cached = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
+    const initialMap = new Map(INITIAL_MATERIALS.map((m) => [m.id, m]));
+    const updated = cached.map((m) => {
+      const init = initialMap.get(m.id);
+      if (init) {
+        return {
+          ...init,
+          ...m,
+          contentSections: m.contentSections && m.contentSections.length > 0 ? m.contentSections : init.contentSections,
+          summary: m.summary || init.summary
+        };
+      }
+      return m;
+    });
+    const cachedIds = new Set(cached.map((c) => c.id));
+    for (const init of INITIAL_MATERIALS) {
+      if (!cachedIds.has(init.id)) updated.push(init);
+    }
+    return updated;
   },
 
   addMaterial(material: Omit<MaterialItem, "id" | "downloads" | "uploadedAt">): MaterialItem {
@@ -356,7 +461,13 @@ export const StudyStore = {
 
   // Quizzes
   getQuizzes(): QuizItem[] {
-    return getStorageItem<QuizItem[]>(STORAGE_KEYS.QUIZZES, INITIAL_QUIZZES);
+    const cached = getStorageItem<QuizItem[]>(STORAGE_KEYS.QUIZZES, INITIAL_QUIZZES);
+    const cachedIds = new Set(cached.map((q) => q.id));
+    const merged = [...cached];
+    for (const init of INITIAL_QUIZZES) {
+      if (!cachedIds.has(init.id)) merged.push(init);
+    }
+    return merged;
   },
 
   addQuiz(quiz: Omit<QuizItem, "id">): QuizItem {
