@@ -190,18 +190,11 @@ export interface AcademyBankDetail {
 
 export const ACADEMY_BANK_ACCOUNTS: AcademyBankDetail[] = [
   {
-    bankName: "Commercial Bank of Ceylon",
-    accountName: "Study With Nafees Academy",
-    accountNumber: "8004921045",
-    branch: "City Branch (Branch Code: 021)",
-    notes: "Mention Student Name & Grade as the transfer reference (e.g., Nimali G9)"
-  },
-  {
-    bankName: "Bank of Ceylon (BOC)",
-    accountName: "Nafees Mohamed",
-    accountNumber: "0092384102",
-    branch: "Central Branch",
-    notes: "Cash Deposit Machines (CDM) & Online Banking accepted"
+    bankName: "Amana Bank",
+    accountName: "MRM NAFEES",
+    accountNumber: "0200521878001",
+    branch: "Dehiwala Branch",
+    notes: "Mention Student Name & Grade as the transfer reference"
   }
 ];
 

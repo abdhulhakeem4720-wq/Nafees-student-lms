@@ -26,7 +26,7 @@ export default function StudentPaymentPage() {
   // Form states
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedMonth, setSelectedMonth] = useState("March 2026");
-  const [selectedBank, setSelectedBank] = useState("Commercial Bank of Ceylon");
+  const [selectedBank, setSelectedBank] = useState("Amana Bank");
   const [referenceNo, setReferenceNo] = useState("");
   const [amount, setAmount] = useState("3500");
   const [slipUrl, setSlipUrl] = useState("");
@@ -145,7 +145,7 @@ export default function StudentPaymentPage() {
           </div>
         </div>
         <p className="text-xs text-slate-500 mt-1 max-w-2xl">
-          Grade {user?.grade || 9} monthly fees can be deposited via Commercial Bank of Ceylon or Bank of Ceylon. Upload your bank receipt or online transfer screenshot below for admin verification.
+          Grade {user?.grade || 9} monthly fees can be deposited via Amana Bank. Upload your bank receipt or online transfer screenshot below for admin verification.
         </p>
       </div>
 
@@ -153,10 +153,10 @@ export default function StudentPaymentPage() {
       <div className="space-y-3">
         <h2 className="text-xs font-black text-slate-900 uppercase tracking-wider flex items-center gap-2">
           <Building2 className="w-4 h-4 text-blue-600" />
-          <span>Official Academy Bank Accounts for Tuition Fee Deposits</span>
+          <span>Official Academy Bank Account for Tuition Fee Deposits</span>
         </h2>
         
-        <div className="grid md:grid-cols-2 gap-4">
+        <div className="grid md:grid-cols-1 max-w-xl gap-4">
           {ACADEMY_BANK_ACCOUNTS.map((b, idx) => (
             <div key={idx} className="p-6 rounded-3xl bg-white border border-slate-200 shadow-sm space-y-3">
               <div className="flex items-center justify-between">
@@ -253,8 +253,7 @@ export default function StudentPaymentPage() {
                   onChange={(e) => setSelectedBank(e.target.value)}
                   className="w-full px-3 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-semibold text-slate-800 outline-none focus:border-blue-500"
                 >
-                  <option value="Commercial Bank of Ceylon">Commercial Bank</option>
-                  <option value="Bank of Ceylon">Bank of Ceylon (BOC)</option>
+                  <option value="Amana Bank">Amana Bank (Dehiwala Branch - 0200521878001)</option>
                   <option value="Online Banking / CDM">Online Banking / CDM</option>
                 </select>
               </div>
