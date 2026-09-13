@@ -103,7 +103,7 @@ export default function HomePage() {
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-black text-slate-900 tracking-tight max-w-4xl mx-auto leading-tight mb-6">
-          Master Science & Mathematics With{" "}
+          MASTER SCIENCE{" "}
           <span className="bg-clip-text text-transparent bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800">
             STUDY WITH NAFEES
           </span>
