@@ -27,7 +27,7 @@ ${subjectName ? `• Subject Enrolled: ${subjectName}` : ""}
 • Timestamp: ${new Date().toLocaleString()}
 
 Admin Control Portal:
-http://localhost:3001/admin
+https://nafees-student-lms.vercel.app/admin
 
 ==============================================
 This is an automated system notification.

@@ -82,8 +82,22 @@ export default function RegisterPage() {
           });
 
           if (signUpError) {
-            console.warn("Supabase auth signUp error:", signUpError.message);
-            if (!signUpError.message.includes("Failed to fetch") && !signUpError.message.includes("fetch failed")) {
+            console.warn("Supabase auth signUp warning:", signUpError.message);
+            const msg = (signUpError.message || "").toLowerCase();
+            const isRateLimit =
+              msg.includes("rate limit") ||
+              msg.includes("rate_limit") ||
+              msg.includes("too many requests") ||
+              msg.includes("over_email_send_rate_limit");
+            const isAlreadyRegistered =
+              msg.includes("already registered") ||
+              msg.includes("already exists") ||
+              msg.includes("user already");
+            const isNetworkError =
+              msg.includes("failed to fetch") || msg.includes("fetch failed");
+
+            // Only display blocking error if it's a real validation failure (not rate limiting or network)
+            if (!isRateLimit && !isAlreadyRegistered && !isNetworkError) {
               setError(signUpError.message);
               setLoading(false);
               return;
@@ -102,16 +116,18 @@ export default function RegisterPage() {
       const randomSeq = Math.floor(100 + Math.random() * 900);
       const studentIndex = `SWN-2026-G${gradeFormatted}-${randomSeq}`;
 
-      // 1. Sync to Supabase cloud API
+      // 1. Sync to Supabase cloud API (creates pre-confirmed account on server if rate limited)
       try {
-        await fetch("/api/students", {
+        const syncRes = await fetch("/api/students", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
             id: authUserId,
             fullName,
             email,
+            password,
             phone,
+            parentPhone,
             grade,
             school,
             medium,
@@ -119,6 +135,10 @@ export default function RegisterPage() {
             role: "student"
           })
         });
+        const syncJson = await syncRes.json();
+        if (syncJson?.userId) {
+          authUserId = syncJson.userId;
+        }
       } catch (syncErr) {
         console.warn("Cloud student sync:", syncErr);
       }

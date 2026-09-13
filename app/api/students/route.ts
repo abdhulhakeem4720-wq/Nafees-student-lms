@@ -96,6 +96,29 @@ export async function POST(req: Request) {
       );
       if (existingUser) {
         userId = existingUser.id;
+      } else if (student.password) {
+        try {
+          const { data: createdAuth } = await admin.auth.admin.createUser({
+            email: student.email,
+            password: student.password,
+            email_confirm: true,
+            user_metadata: {
+              full_name: student.fullName,
+              phone: student.phone,
+              parent_phone: student.parentPhone,
+              school: student.school,
+              medium: student.medium,
+              grade: String(student.grade),
+              studentIndex: student.studentIndex,
+              role: "student"
+            }
+          });
+          if (createdAuth?.user) {
+            userId = createdAuth.user.id;
+          }
+        } catch (createErr) {
+          console.warn("Server auth createUser warning:", createErr);
+        }
       }
     }
 
@@ -111,7 +134,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, userId });
   } catch (err: any) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
