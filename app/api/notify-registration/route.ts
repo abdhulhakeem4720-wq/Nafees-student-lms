@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const ADMIN_NOTIFICATION_EMAIL = "nfsmhd585@gmail.com";
+const ADMIN_NOTIFICATION_EMAIL = "nfsmhd5@gmail.com";
 
 // Auto-fires when a new student registers or enrolls.
 // Sends an immediate admin email notification to abdhulhakeem4720@gmail.com.

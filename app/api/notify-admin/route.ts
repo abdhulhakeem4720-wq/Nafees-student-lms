@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/server";
 
-const PRIMARY_ADMIN_EMAIL = "nfsmhd585@gmail.com";
+const PRIMARY_ADMIN_EMAIL = "nfsmhd5@gmail.com";
 const SECONDARY_ADMIN_EMAIL = "nfsmhdlms@gmail.com";
 
 export async function POST(req: Request) {

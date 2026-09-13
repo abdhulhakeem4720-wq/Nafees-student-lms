@@ -102,7 +102,7 @@ export default function StudentPaymentPage() {
       bankName: selectedBank
     });
 
-    // Notify Admin via email to nfsmhd585@gmail.com
+    // Notify Admin via email to nfsmhd5@gmail.com
     fetch("/api/notify-admin", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
