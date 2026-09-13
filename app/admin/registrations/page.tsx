@@ -19,7 +19,8 @@ import {
   School,
   Save,
   UserCheck,
-  ShieldCheck
+  ShieldCheck,
+  RefreshCw
 } from "lucide-react";
 
 export default function AdminRegistrationsPage() {
@@ -49,10 +50,42 @@ export default function AdminRegistrationsPage() {
 
   // Delete Confirmation State
   const [deletingStudent, setDeletingStudent] = useState<UserProfile | null>(null);
+  const [syncingCloud, setSyncingCloud] = useState(false);
 
   useEffect(() => {
     loadData();
   }, []);
+
+  async function syncFromCloud() {
+    setSyncingCloud(true);
+    try {
+      const res = await fetch("/api/students");
+      if (res.ok) {
+        const data = await res.json();
+        if (data.students && Array.isArray(data.students)) {
+          const localList = StudyStore.getRegisteredUsers();
+          const emailMap = new Map(localList.map((s) => [s.email.toLowerCase(), s]));
+
+          let addedNew = false;
+          for (const cloudStu of data.students) {
+            if (!emailMap.has(cloudStu.email.toLowerCase())) {
+              localList.unshift(cloudStu);
+              addedNew = true;
+            }
+          }
+
+          if (addedNew) {
+            setStudents([...localList]);
+            showToast("Cloud synchronization complete: New registered students loaded from Supabase.");
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Cloud sync error:", err);
+    } finally {
+      setSyncingCloud(false);
+    }
+  }
 
   function loadData() {
     const list = StudyStore.getRegisteredUsers();
@@ -62,6 +95,7 @@ export default function AdminRegistrationsPage() {
     if (subs.length > 0 && !addForm.enrolledSubjectTitle) {
       setAddForm((prev) => ({ ...prev, enrolledSubjectTitle: `Grade 9 ${subs[0].title}` }));
     }
+    syncFromCloud();
   }
 
   function showToast(text: string, type: "success" | "error" = "success") {
@@ -85,13 +119,21 @@ export default function AdminRegistrationsPage() {
     });
   }
 
-  function handleSaveEdit(e: React.FormEvent) {
+  async function handleSaveEdit(e: React.FormEvent) {
     e.preventDefault();
     if (!editingStudent) return;
 
     try {
       const updatedList = StudyStore.updateStudent(editingStudent.id, editForm);
       setStudents(updatedList);
+
+      // Also sync to cloud API
+      fetch("/api/students", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: editingStudent.id, ...editForm })
+      }).catch(() => {});
+
       showToast(`Student ${editForm.fullName || editingStudent.fullName} updated successfully!`);
       setEditingStudent(null);
     } catch (err: any) {
@@ -100,12 +142,18 @@ export default function AdminRegistrationsPage() {
   }
 
   // Handle Delete Action
-  function confirmDeleteStudent() {
+  async function confirmDeleteStudent() {
     if (!deletingStudent) return;
 
     try {
       const updatedList = StudyStore.deleteStudent(deletingStudent.id);
       setStudents(updatedList);
+
+      // Also sync deletion to cloud API
+      fetch(`/api/students?id=${encodeURIComponent(deletingStudent.id)}`, {
+        method: "DELETE"
+      }).catch(() => {});
+
       showToast(`Student ${deletingStudent.fullName} was permanently deleted from registrations.`);
       setDeletingStudent(null);
     } catch (err: any) {
@@ -114,12 +162,12 @@ export default function AdminRegistrationsPage() {
   }
 
   // Handle Add Student
-  function handleAddStudent(e: React.FormEvent) {
+  async function handleAddStudent(e: React.FormEvent) {
     e.preventDefault();
     if (!addForm.fullName || !addForm.email) return;
 
     try {
-      StudyStore.addStudentByAdmin({
+      const newStudentData = {
         fullName: addForm.fullName,
         email: addForm.email,
         phone: addForm.phone,
@@ -129,8 +177,17 @@ export default function AdminRegistrationsPage() {
         status: addForm.status,
         enrolledSubjectTitle: addForm.enrolledSubjectTitle,
         registeredSubjects: [],
-        role: "student"
-      });
+        role: "student" as const
+      };
+
+      StudyStore.addStudentByAdmin(newStudentData);
+
+      // Sync to cloud API
+      fetch("/api/students", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newStudentData)
+      }).catch(() => {});
 
       setStudents(StudyStore.getRegisteredUsers());
       showToast(`New student ${addForm.fullName} registered successfully!`);
@@ -215,6 +272,15 @@ export default function AdminRegistrationsPage() {
         </div>
 
         <div className="flex items-center gap-2.5">
+          <button
+            onClick={syncFromCloud}
+            disabled={syncingCloud}
+            className="btn-secondary text-xs py-2.5 px-3.5 inline-flex items-center gap-1.5 shadow-sm"
+            title="Fetch latest student registrations from Supabase cloud"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${syncingCloud ? "animate-spin" : ""}`} />
+            <span>{syncingCloud ? "Syncing..." : "Sync Cloud"}</span>
+          </button>
           <button
             onClick={handleExportCSV}
             className="btn-secondary text-xs py-2.5 px-3.5 inline-flex items-center gap-1.5 shadow-sm"

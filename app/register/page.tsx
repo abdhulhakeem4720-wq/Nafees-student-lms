@@ -57,6 +57,8 @@ export default function RegisterPage() {
       return;
     }
 
+    let authUserId: string | null = null;
+
     try {
       const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
       const { isSupabasePlaceholder } = await import("@/lib/supabase/client");
@@ -87,6 +89,10 @@ export default function RegisterPage() {
               return;
             }
           }
+
+          if (data?.user) {
+            authUserId = data.user.id;
+          }
         } catch (netErr) {
           console.warn("Supabase registration network warning:", netErr);
         }
@@ -96,6 +102,28 @@ export default function RegisterPage() {
       const randomSeq = Math.floor(100 + Math.random() * 900);
       const studentIndex = `SWN-2026-G${gradeFormatted}-${randomSeq}`;
 
+      // 1. Sync to Supabase cloud API
+      try {
+        await fetch("/api/students", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            id: authUserId,
+            fullName,
+            email,
+            phone,
+            grade,
+            school,
+            medium,
+            studentIndex,
+            role: "student"
+          })
+        });
+      } catch (syncErr) {
+        console.warn("Cloud student sync:", syncErr);
+      }
+
+      // 2. Store in local state/session
       StudyStore.registerStudent({
         email,
         fullName,
