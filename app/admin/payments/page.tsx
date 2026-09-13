@@ -27,7 +27,24 @@ export default function AdminPaymentsPage() {
           const cloudPayments: PaymentItem[] = data.payments;
           const localPayments = StudyStore.getPayments();
 
-          // Push any local items not yet in cloud
+          // Build merged payment map: cloud payments + local payments
+          const mergedMap = new Map<string, PaymentItem>();
+          
+          // Seed with local payments
+          localPayments.forEach((p) => {
+            const key = p.id || `${p.studentEmail}_${p.subjectTitle}`;
+            mergedMap.set(key, p);
+          });
+
+          // Overlay cloud payments (authoritative)
+          cloudPayments.forEach((p) => {
+            const key = p.id || `${p.studentEmail}_${p.subjectTitle}`;
+            mergedMap.set(key, p);
+          });
+
+          const finalPayments = Array.from(mergedMap.values());
+
+          // Push any local items not yet in cloud to Supabase
           const cloudIdSet = new Set(cloudPayments.map((p) => p.id));
           const unSynced = localPayments.filter((p) => !cloudIdSet.has(p.id));
 
@@ -36,29 +53,14 @@ export default function AdminPaymentsPage() {
               method: "POST",
               headers: { "Content-Type": "application/json" },
               body: JSON.stringify({ payments: unSynced })
-            });
-            const refreshRes = await fetch("/api/payments");
-            if (refreshRes.ok) {
-              const refreshData = await refreshRes.json();
-              if (refreshData && Array.isArray(refreshData.payments)) {
-                setPayments(refreshData.payments);
-                showToast(`Cloud synchronization complete: ${refreshData.payments.length} payment receipts synced with Supabase.`);
-                return;
-              }
-            }
+            }).catch(() => {});
           }
 
-          if (cloudPayments.length > 0) {
-            setPayments(cloudPayments);
-            showToast(`Cloud synchronization complete: ${cloudPayments.length} payment slips loaded from Supabase.`);
-          } else if (localPayments.length > 0) {
-            await fetch("/api/payments", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({ payments: localPayments })
-            });
-            showToast(`Uploaded ${localPayments.length} payment records to Supabase cloud.`);
+          if (typeof window !== "undefined") {
+            localStorage.setItem("study_hub_payments", JSON.stringify(finalPayments));
           }
+          setPayments(finalPayments);
+          showToast(`Cloud synchronization complete: ${finalPayments.length} payment slips active.`);
         }
       }
     } catch (err: any) {

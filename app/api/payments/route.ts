@@ -24,7 +24,7 @@ export async function GET() {
         created_at,
         verified_at,
         student_id,
-        profiles (
+        student:profiles!payments_student_id_fkey (
           id,
           full_name,
           email,
@@ -53,7 +53,7 @@ export async function GET() {
     }
 
     const payments: PaymentItem[] = rows.map((r: any) => {
-      const profile = r.profiles || {};
+      const profile = r.student || r.profiles || {};
       const reg = r.registrations || {};
       const sub = reg.subjects || {};
 
