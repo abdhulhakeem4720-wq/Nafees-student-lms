@@ -43,6 +43,19 @@ export default function StudentSubjectsPage() {
       setGradeError(result.error);
     } else if (result.user) {
       setUser(result.user);
+      const isEnrolled = result.user.registeredSubjects.includes(sub.id);
+      fetch("/api/notify-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: isEnrolled ? "Subject Enrollment" : "Subject Withdrawn",
+          studentName: result.user.fullName,
+          studentEmail: result.user.email,
+          studentPhone: result.user.phone,
+          grade: sub.grade,
+          subjectTitle: `${sub.title} (${sub.code})`
+        })
+      }).catch(() => {});
     }
   }
 

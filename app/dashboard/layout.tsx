@@ -99,7 +99,7 @@ export default function StudentLayout({ children }: { children: React.ReactNode 
         {/* Footer Actions */}
         <div className="pt-6 border-t border-slate-200 space-y-2">
           <a
-            href="https://wa.me/94719876543"
+            href="https://wa.me/94757794423"
             target="_blank"
             rel="noreferrer"
             className="w-full p-2.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 active:bg-emerald-200 border border-emerald-200 text-[11px] text-emerald-800 text-center font-bold flex items-center justify-center gap-2 transition"

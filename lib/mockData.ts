@@ -207,9 +207,9 @@ export const ACADEMY_BANK_ACCOUNTS: AcademyBankDetail[] = [
 
 export const ACADEMY_CONTACT = {
   directorName: "Sir Nafees Mohamed",
-  phone: "+94 71 987 6543",
-  whatsappDisplay: "+94 71 987 6543",
-  whatsappUrl: "https://wa.me/94719876543",
+  phone: "+94 75 779 4423",
+  whatsappDisplay: "+94 75 779 4423",
+  whatsappUrl: "https://wa.me/94757794423",
   email: "nfsmhdlms@gmail.com",
   zoomMeetingId: "849 2039 1102",
   zoomPasscode: "NAFEES2026",
@@ -825,7 +825,7 @@ export const INITIAL_ABOUT_SIR: AboutSirDetails = {
   ],
   experienceYears: 10,
   email: "nfsmhdlms@gmail.com",
-  phone: "+94 71 987 6543",
+  phone: "+94 75 779 4423",
   location: "Kandy Road Tuition Complex / Islandwide Live Zoom Sessions",
   teachingPhilosophy: "True education is not mere rote learning; it is cultivating scientific reasoning and mathematical confidence. When concepts are unlocked step-by-step with patience and structure, every student has the potential to excel."
 };

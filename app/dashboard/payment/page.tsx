@@ -102,6 +102,23 @@ export default function StudentPaymentPage() {
       bankName: selectedBank
     });
 
+    // Notify Admin via email to nfsmhd585@gmail.com
+    fetch("/api/notify-admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "Payment Slip Uploaded",
+        studentName: user?.fullName || "Student",
+        studentEmail: user?.email || "student@study.edu",
+        studentPhone: user?.phone || "N/A",
+        grade: user?.grade || 9,
+        subjectTitle: selectedSubject,
+        amount: Number(amount) || 3500,
+        referenceNo: referenceNo || `REF-${Math.floor(10000 + Math.random() * 90000)}`,
+        details: `Month: ${selectedMonth} | Bank: ${selectedBank}`
+      })
+    }).catch(() => {});
+
     loadUserPayments(user);
     setSuccessMsg(`Payment slip for ${selectedSubject} (${selectedMonth}) submitted! Verified within 24 hours.`);
     setLoading(false);

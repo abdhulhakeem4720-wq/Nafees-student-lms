@@ -95,6 +95,23 @@ export default function StudentMaterialsPage() {
     StudyStore.incrementMaterialDownload(mat.id);
     refreshMaterials();
     setSelectedMaterial(mat);
+
+    fetch("/api/notify-admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        actionType: "material_accessed",
+        studentId: user?.studentIndex || user?.id || user?.fullName || "Student",
+        studentName: user?.fullName,
+        studentEmail: user?.email,
+        details: {
+          materialTitle: mat.title,
+          materialCategory: mat.category,
+          materialSubject: mat.subjectTitle,
+          grade: mat.grade
+        }
+      })
+    }).catch((err) => console.error("Admin notification error:", err));
   }
 
   function handleResetFilters() {

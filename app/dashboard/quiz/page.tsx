@@ -86,6 +86,23 @@ export default function StudentQuizPage() {
       passed
     });
     setIsCompleted(true);
+
+    // Notify Admin via email to nfsmhd585@gmail.com
+    fetch("/api/notify-admin", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        action: "Online Quiz Completed",
+        studentName: user?.fullName || "Student",
+        studentEmail: user?.email || "student@study.edu",
+        studentPhone: user?.phone || "N/A",
+        grade: user?.grade || activeQuiz.grade,
+        subjectTitle: activeQuiz.title,
+        quizScore: correctCount,
+        quizTotal: activeQuiz.questions.length,
+        details: `Score: ${correctCount}/${activeQuiz.questions.length} (${percentage}%) — Result: ${passed ? "PASSED (Distinction)" : "NEEDS REVISION"}`
+      })
+    }).catch(() => {});
   }
 
   function formatTime(seconds: number) {

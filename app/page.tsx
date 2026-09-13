@@ -348,7 +348,7 @@ export default function HomePage() {
 
           <div className="pt-6 border-t border-slate-100 flex flex-col sm:flex-row items-center justify-between gap-2 text-[11px] text-slate-400">
             <span>© 2026 STUDY WITH NAFEES. All Rights Reserved. G.C.E. O/L Science & Mathematics Specialist.</span>
-            <span>Hotline: +94 71 987 6543 • Email: {ACADEMY_CONTACT.email}</span>
+            <span>Hotline / WhatsApp: {ACADEMY_CONTACT.phone} • Email: {ACADEMY_CONTACT.email}</span>
           </div>
         </div>
       </footer>

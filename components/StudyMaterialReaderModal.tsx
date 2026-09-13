@@ -165,10 +165,10 @@ export default function StudyMaterialReaderModal({
           <div className="pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-3">
             <div className="flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-blue-600" />
-              <span>STUDY WITH NAFEES ACADEMY • Hotline: +94 71 987 6543</span>
+              <span>STUDY WITH NAFEES ACADEMY • Hotline: +94 75 779 4423</span>
             </div>
             <a
-              href="https://wa.me/94719876543"
+              href="https://wa.me/94757794423"
               target="_blank"
               rel="noreferrer"
               className="inline-flex items-center gap-1.5 text-blue-600 hover:text-blue-800 font-semibold"

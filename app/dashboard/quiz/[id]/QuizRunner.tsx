@@ -39,6 +39,25 @@ export default function QuizRunner({
       answers
     });
 
+    try {
+      await fetch("/api/notify-admin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          actionType: "quiz_completed",
+          studentId,
+          details: {
+            quizId,
+            score,
+            total: questions.length,
+            percentage: Math.round((score / Math.max(1, questions.length)) * 100) + "%"
+          }
+        })
+      });
+    } catch (notifyErr) {
+      console.error("Admin notification error:", notifyErr);
+    }
+
     setResult({ score, total: questions.length });
     setBusy(false);
     router.refresh();
