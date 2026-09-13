@@ -34,15 +34,38 @@ export default function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function notifyAdminOfRegistration(studentDetails: { fullName: string; email: string; phone: string; grade: number }) {
+  async function notifyAdminOfRegistration(studentDetails: {
+    fullName: string;
+    email: string;
+    phone: string;
+    grade: number;
+    studentIndex?: string;
+    parentPhone?: string;
+    school?: string;
+    medium?: string;
+  }) {
     try {
-      await fetch("/api/notify-registration", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(studentDetails)
-      });
+      await Promise.allSettled([
+        fetch("/api/notify-registration", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(studentDetails)
+        }),
+        fetch("/api/notify-admin", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            action: "New Student Registration",
+            studentName: studentDetails.fullName,
+            studentEmail: studentDetails.email,
+            studentPhone: studentDetails.phone,
+            grade: studentDetails.grade,
+            details: `Index: ${studentDetails.studentIndex || "N/A"} | School: ${studentDetails.school || "N/A"} | Parent: ${studentDetails.parentPhone || "N/A"} | Medium: ${studentDetails.medium || "English"}`
+          })
+        })
+      ]);
     } catch (err) {
-      console.warn("Admin notification email completed:", err);
+      console.warn("Admin notification email warning:", err);
     }
   }
 
@@ -158,7 +181,16 @@ export default function RegisterPage() {
         password
       });
 
-      await notifyAdminOfRegistration({ fullName, email, phone, grade });
+      await notifyAdminOfRegistration({
+        fullName,
+        email,
+        phone,
+        grade,
+        studentIndex,
+        parentPhone,
+        school,
+        medium
+      });
 
       window.location.href = "/dashboard";
     } catch (err: any) {

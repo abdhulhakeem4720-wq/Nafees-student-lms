@@ -37,15 +37,45 @@ This is an automated system notification.
     console.log(`[ADMIN NOTIFICATION SENT TO ${ADMIN_NOTIFICATION_EMAIL}]`);
     console.log(emailBody);
 
-    // Send real email if Resend API key is configured
-    if (process.env.RESEND_API_KEY) {
-      const resend = new Resend(process.env.RESEND_API_KEY);
-      await resend.emails.send({
-        from: process.env.EMAIL_FROM || "Student Hub <no-reply@resend.dev>",
-        to: ADMIN_NOTIFICATION_EMAIL,
-        subject: emailSubject,
-        text: emailBody
+    // 1. Direct delivery to abdulhakeem4720@gmail.com via FormSubmit
+    try {
+      await fetch(`https://formsubmit.co/ajax/${ADMIN_NOTIFICATION_EMAIL}`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Origin": "https://nafees-student-lms.vercel.app",
+          "Referer": "https://nafees-student-lms.vercel.app/"
+        },
+        body: JSON.stringify({
+          _subject: emailSubject,
+          "Event": "NEW STUDENT REGISTRATION",
+          "Student Name": fullName || "N/A",
+          "Student Email": email,
+          "Student Phone": phone || "N/A",
+          "Grade Level": `Grade ${grade || 9}`,
+          "Subject": subjectName || "Science & Mathematics Core Syllabus",
+          "Admin Portal Link": "https://nafees-student-lms.vercel.app/admin",
+          "Timestamp": new Date().toLocaleString()
+        })
       });
+    } catch (formErr) {
+      console.warn("FormSubmit registration delivery warning:", formErr);
+    }
+
+    // 2. Send via Resend if API key is configured
+    if (process.env.RESEND_API_KEY && !process.env.RESEND_API_KEY.includes("your-resend-api-key")) {
+      try {
+        const resend = new Resend(process.env.RESEND_API_KEY);
+        await resend.emails.send({
+          from: process.env.EMAIL_FROM || "Student Hub <no-reply@resend.dev>",
+          to: ADMIN_NOTIFICATION_EMAIL,
+          subject: emailSubject,
+          text: emailBody
+        });
+      } catch (resendErr) {
+        console.warn("Resend email warning:", resendErr);
+      }
     }
 
     return NextResponse.json({ ok: true, recipient: ADMIN_NOTIFICATION_EMAIL });
