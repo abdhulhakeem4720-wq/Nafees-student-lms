@@ -14,9 +14,20 @@ export default function StudentMaterialsPage() {
   const [selectedTypeFilter, setSelectedTypeFilter] = useState<string>("all");
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>("all");
   const [selectedMaterial, setSelectedMaterial] = useState<MaterialItem | null>(null);
+  const [syncingCloud, setSyncingCloud] = useState(false);
 
   function refreshMaterials() {
     setMaterials(StudyStore.getMaterials());
+  }
+
+  async function handleManualSync() {
+    setSyncingCloud(true);
+    try {
+      await StudyStore.refreshMaterialsFromSupabase();
+      refreshMaterials();
+    } finally {
+      setSyncingCloud(false);
+    }
   }
 
   useEffect(() => {
@@ -123,6 +134,15 @@ export default function StudentMaterialsPage() {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={handleManualSync}
+              disabled={syncingCloud}
+              className="px-3 py-1.5 text-xs font-semibold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-xl transition inline-flex items-center gap-1.5 shadow-sm"
+              title="Refresh materials from cloud"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${syncingCloud ? "animate-spin" : ""}`} />
+              <span>{syncingCloud ? "Syncing..." : "Sync Cloud"}</span>
+            </button>
             {isFiltered && (
               <button
                 onClick={handleResetFilters}

@@ -3,11 +3,13 @@
 import { useEffect, useState } from "react";
 import { StudyStore } from "@/lib/store";
 import { MaterialItem, SubjectItem } from "@/lib/mockData";
-import { FolderOpen, Upload, Link2, FilePlus, Trash2, ExternalLink, FileText, UploadCloud } from "lucide-react";
+import { FolderOpen, Upload, Link2, FilePlus, Trash2, ExternalLink, FileText, UploadCloud, RefreshCw, CheckCircle2, AlertCircle } from "lucide-react";
 
 export default function AdminMaterialsPage() {
   const [materials, setMaterials] = useState<MaterialItem[]>([]);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
+  const [syncingCloud, setSyncingCloud] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
 
   // Form fields
   const [title, setTitle] = useState("");
@@ -19,15 +21,73 @@ export default function AdminMaterialsPage() {
   const [fileUrlInput, setFileUrlInput] = useState("");
   const [fileSize, setFileSize] = useState("");
 
+  function showToast(text: string, type: "success" | "error" = "success") {
+    setToastMessage({ text, type });
+    setTimeout(() => setToastMessage(null), 3500);
+  }
+
+  async function syncFromCloud() {
+    setSyncingCloud(true);
+    try {
+      const res = await fetch("/api/materials");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.materials)) {
+          const cloudMats: MaterialItem[] = data.materials;
+          const localMats = StudyStore.getMaterials();
+
+          // Check if local has items that aren't in cloud yet
+          const cloudTitleSet = new Set(cloudMats.map((m) => m.title.toLowerCase().trim()));
+          const unSynced = localMats.filter((m) => !cloudTitleSet.has(m.title.toLowerCase().trim()));
+
+          if (unSynced.length > 0) {
+            // Push un-synced items to cloud
+            await fetch("/api/materials", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ materials: unSynced })
+            });
+            // Fetch fresh combined list
+            const refreshRes = await fetch("/api/materials");
+            if (refreshRes.ok) {
+              const refreshData = await refreshRes.json();
+              if (refreshData && Array.isArray(refreshData.materials)) {
+                setMaterials(refreshData.materials);
+                showToast(`Cloud synchronization complete: ${refreshData.materials.length} study documents synced across all devices.`);
+                return;
+              }
+            }
+          }
+
+          if (cloudMats.length > 0) {
+            setMaterials(cloudMats);
+            showToast(`Cloud synchronization complete: ${cloudMats.length} study documents loaded from Supabase.`);
+          } else if (localMats.length > 0) {
+            // If cloud was empty, upload local starter materials to cloud
+            await fetch("/api/materials", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ materials: localMats })
+            });
+            showToast(`Uploaded ${localMats.length} documents to Supabase cloud.`);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn("Cloud sync error:", err);
+      showToast("Could not sync with Supabase cloud", "error");
+    } finally {
+      setSyncingCloud(false);
+    }
+  }
+
   useEffect(() => {
     setMaterials(StudyStore.getMaterials());
     const subs = StudyStore.getSubjects();
     setSubjects(subs);
     if (subs.length > 0) setSelectedSubjectId(subs[0].id);
 
-    StudyStore.refreshMaterialsFromSupabase().then(() => {
-      setMaterials(StudyStore.getMaterials());
-    });
+    syncFromCloud();
 
     function handleStorage(e: StorageEvent) {
       if (e.key === "study_hub_materials") {
@@ -114,24 +174,58 @@ export default function AdminMaterialsPage() {
     setFileUrlInput("");
     setFileSize("");
 
-    alert(`Study material "${title}" successfully published for Grade ${targetSub.grade}!`);
+    showToast(`Study material "${title}" successfully published & synced to cloud for Grade ${targetSub.grade}!`);
   }
 
   function handleDelete(id: string) {
+    const target = materials.find((m) => m.id === id);
     if (confirm("Are you sure you want to delete this study material?")) {
       StudyStore.deleteMaterial(id);
       setMaterials(StudyStore.getMaterials());
+      showToast(`Study material "${target?.title || id}" deleted.`);
     }
   }
 
   return (
     <div className="space-y-8">
       
+      {/* Toast Alert */}
+      {toastMessage && (
+        <div
+          className={`p-4 rounded-xl text-xs font-semibold shadow-md flex items-center gap-2 border animate-fadeIn ${
+            toastMessage.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : "bg-red-50 border-red-200 text-red-800"
+          }`}
+        >
+          {toastMessage.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          )}
+          <span>{toastMessage.text}</span>
+        </div>
+      )}
+
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-slate-200">
-        <span className="badge badge-brand mb-1">Study Content Management</span>
-        <h1 className="text-2xl font-bold text-slate-900">Upload Study Notes & Documents</h1>
-        <p className="text-xs text-slate-500">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–11 students.</p>
+      <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="badge badge-brand mb-1">Study Content Management</span>
+          <h1 className="text-2xl font-bold text-slate-900">Upload Study Notes & Documents</h1>
+          <p className="text-xs text-slate-500">Directly upload PDF files, Word notes, presentations, or video links for Grade 6–11 students.</p>
+        </div>
+
+        <div className="flex items-center gap-2.5">
+          <button
+            onClick={syncFromCloud}
+            disabled={syncingCloud}
+            className="btn-secondary text-xs py-2.5 px-3.5 inline-flex items-center gap-1.5 shadow-sm"
+            title="Synchronize all study materials across phone, laptop, and students via Supabase"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${syncingCloud ? "animate-spin" : ""}`} />
+            <span>{syncingCloud ? "Syncing..." : "Sync Cloud"}</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">

@@ -12,11 +12,12 @@ import {
   Clock, 
   FileText, 
   FolderOpen, 
-  FileQuestion,
-  Users,
-  CheckCircle2,
-  TrendingUp,
-  ArrowRight
+  FileQuestion, 
+  Users, 
+  CheckCircle2, 
+  TrendingUp, 
+  ArrowRight,
+  RefreshCw
 } from "lucide-react";
 
 export default function AdminDashboardPage() {
@@ -24,16 +25,31 @@ export default function AdminDashboardPage() {
   const [materials, setMaterials] = useState<MaterialItem[]>([]);
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
   const [messages, setMessages] = useState<BroadcastMessage[]>([]);
+  const [syncing, setSyncing] = useState(false);
 
-  useEffect(() => {
+  function reloadAll() {
     setPayments(StudyStore.getPayments());
     setMaterials(StudyStore.getMaterials());
     setQuizzes(StudyStore.getQuizzes());
     setMessages(StudyStore.getMessages());
+  }
 
-    StudyStore.refreshMaterialsFromSupabase().then(() => {
-      setMaterials(StudyStore.getMaterials());
-    });
+  async function syncAll() {
+    setSyncing(true);
+    try {
+      await Promise.allSettled([
+        StudyStore.refreshMaterialsFromSupabase(),
+        StudyStore.refreshPaymentsFromSupabase()
+      ]);
+      reloadAll();
+    } finally {
+      setSyncing(false);
+    }
+  }
+
+  useEffect(() => {
+    reloadAll();
+    syncAll();
   }, []);
 
   const pendingPayments = payments.filter((p) => p.status === "Pending");
@@ -63,6 +79,15 @@ export default function AdminDashboardPage() {
           </p>
 
           <div className="flex flex-wrap gap-3 pt-2">
+            <button
+              onClick={syncAll}
+              disabled={syncing}
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-emerald-500 hover:bg-emerald-600 active:scale-[0.98] text-white rounded-xl text-xs font-bold shadow-md transition-all"
+            >
+              <RefreshCw className={`w-4 h-4 ${syncing ? "animate-spin" : ""}`} />
+              <span>{syncing ? "Syncing..." : "Sync Cloud Data"}</span>
+            </button>
+
             <Link
               href="/admin/payments"
               className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-blue-950 hover:bg-blue-50 active:scale-[0.98] rounded-xl text-xs font-bold shadow-md transition-all"

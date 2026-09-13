@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { StudyStore } from "@/lib/store";
 import { QuizItem, SubjectItem, QuizQuestion } from "@/lib/mockData";
-import { FileQuestion, Clock, Plus, Trash2, CheckCircle2, Award } from "lucide-react";
+import { FileQuestion, Clock, Plus, Trash2, CheckCircle2, Award, RefreshCw } from "lucide-react";
 
 export default function AdminQuizzesPage() {
   const [quizzes, setQuizzes] = useState<QuizItem[]>([]);
@@ -77,10 +77,24 @@ export default function AdminQuizzesPage() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div className="p-6 rounded-2xl glass-card border border-slate-200">
-        <span className="badge badge-blue mb-1">Exam Builder Studio</span>
-        <h1 className="text-2xl font-bold text-slate-900">Create & Manage Online Quizzes</h1>
-        <p className="text-xs text-slate-500">Design timed multiple-choice online exams for Grade 6 to 11 Science & Mathematics.</p>
+      <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <span className="badge badge-blue mb-1">Exam Builder Studio</span>
+          <h1 className="text-2xl font-bold text-slate-900">Create & Manage Online Quizzes</h1>
+          <p className="text-xs text-slate-500">Design timed multiple-choice online exams for Grade 6 to 11 Science & Mathematics.</p>
+        </div>
+
+        <button
+          onClick={() => {
+            setQuizzes(StudyStore.getQuizzes());
+            alert("Quizzes re-synchronized.");
+          }}
+          className="btn-secondary text-xs py-2 px-3.5 inline-flex items-center gap-1.5 shadow-sm"
+          title="Synchronize quizzes"
+        >
+          <RefreshCw className="w-3.5 h-3.5 text-blue-600" />
+          <span>Sync Cloud</span>
+        </button>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">

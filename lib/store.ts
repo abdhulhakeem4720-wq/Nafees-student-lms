@@ -89,105 +89,93 @@ async function getSupabase() {
 }
 
 async function syncMaterialsToSupabase(): Promise<void> {
-  const supabase = await getSupabase();
-  if (!supabase) return;
-
+  if (typeof window === "undefined") return;
   try {
     const materials = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
-    for (const m of materials) {
-      const safeUrl = m.fileUrl && m.fileUrl.length > 100000 ? "#" : m.fileUrl;
-      const desc = `${m.type} | Grade ${m.grade} | ${m.subjectTitle} | Size: ${m.fileSize}`;
-      
-      const extendedRow: any = {
-        id: m.id,
-        title: m.title,
-        description: desc,
-        file_url: safeUrl,
-        subject_title: m.subjectTitle,
-        grade: m.grade,
-        category: m.category,
-        type: m.type,
-        file_size: m.fileSize,
-        downloads: m.downloads,
-        uploaded_at: m.uploadedAt
-      };
-      if (m.subjectId && !m.subjectId.startsWith("sub-")) {
-        extendedRow.subject_id = m.subjectId;
-      }
-
-      const { error } = await supabase.from("materials").upsert(extendedRow);
-      if (error) {
-        const standardRow = {
-          id: m.id,
-          title: m.title,
-          description: desc,
-          file_url: safeUrl
-        };
-        await supabase.from("materials").upsert(standardRow);
-      }
-    }
+    await fetch("/api/materials", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ materials })
+    });
   } catch (err) {
     console.warn("Failed to sync materials to Supabase:", err);
   }
 }
 
 async function refreshMaterialsFromSupabase(): Promise<void> {
-  const supabase = await getSupabase();
-  if (!supabase) return;
-
+  if (typeof window === "undefined") return;
   try {
-    const { data, error } = await supabase.from("materials").select("*");
-    if (error) {
-      console.warn("Supabase materials fetch error:", error.message);
-      return;
-    }
-    if (data && data.length > 0) {
-      const materials: MaterialItem[] = data.map((row: any) => {
-        // Parse metadata from description if custom columns are missing
-        let type: MaterialItem["type"] = (row.type as any) || "PDF Note";
-        let grade = row.grade || 9;
-        let subjectTitle = row.subject_title || row.title;
-        let fileSize = row.file_size || "1.5 MB";
+    const res = await fetch("/api/materials");
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.materials) && data.materials.length > 0) {
+        const local = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
+        const map = new Map<string, MaterialItem>();
 
-        if (row.description && row.description.includes("|")) {
-          const parts = row.description.split("|").map((p: string) => p.trim());
-          if (parts.length >= 3) {
-            type = (parts[0] as any) || type;
-            const gMatch = parts[1].match(/\d+/);
-            if (gMatch) grade = parseInt(gMatch[0], 10);
-            subjectTitle = parts[2] || subjectTitle;
-            if (parts[3] && parts[3].startsWith("Size:")) {
-              fileSize = parts[3].replace("Size:", "").trim();
-            }
+        // Cloud materials are authoritative
+        data.materials.forEach((m: MaterialItem) => {
+          map.set(m.title.toLowerCase().trim(), m);
+        });
+
+        // Retain any local draft items not yet synced
+        local.forEach((m: MaterialItem) => {
+          const key = m.title.toLowerCase().trim();
+          if (!map.has(key)) {
+            map.set(key, m);
           }
-        }
+        });
 
-        return {
-          id: row.id,
-          title: row.title,
-          subjectId: row.subject_id || "",
-          subjectTitle,
-          grade,
-          category: (row.category as "Science" | "Mathematics") || "Science",
-          type,
-          fileUrl: row.file_url || "#",
-          fileSize,
-          downloads: row.downloads || 0,
-          uploadedAt: row.uploaded_at || new Date().toISOString().split("T")[0]
-        };
-      });
-
-      // Merge with initial materials if unique
-      const existing = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, INITIAL_MATERIALS);
-      const map = new Map<string, MaterialItem>();
-      existing.forEach((item) => map.set(item.id, item));
-      materials.forEach((item) => map.set(item.id, item));
-
-      const merged = Array.from(map.values());
-      setStorageItem(STORAGE_KEYS.MATERIALS, merged);
+        const merged = Array.from(map.values());
+        setStorageItem(STORAGE_KEYS.MATERIALS, merged);
+      }
     }
   } catch (err) {
     console.warn("Failed to refresh materials from Supabase:", err);
+  }
+}
+
+async function syncPaymentsToSupabase(): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    const payments = getStorageItem<PaymentItem[]>(STORAGE_KEYS.PAYMENTS, INITIAL_PAYMENTS);
+    await fetch("/api/payments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ payments })
+    });
+  } catch (err) {
+    console.warn("Failed to sync payments to Supabase:", err);
+  }
+}
+
+async function refreshPaymentsFromSupabase(): Promise<void> {
+  if (typeof window === "undefined") return;
+  try {
+    const res = await fetch("/api/payments");
+    if (res.ok) {
+      const data = await res.json();
+      if (data && Array.isArray(data.payments) && data.payments.length > 0) {
+        const local = getStorageItem<PaymentItem[]>(STORAGE_KEYS.PAYMENTS, INITIAL_PAYMENTS);
+        const map = new Map<string, PaymentItem>();
+
+        // Cloud payments
+        data.payments.forEach((p: PaymentItem) => {
+          map.set(p.id, p);
+        });
+
+        // Local payments not yet in cloud
+        local.forEach((p: PaymentItem) => {
+          if (!map.has(p.id)) {
+            map.set(p.id, p);
+          }
+        });
+
+        const merged = Array.from(map.values());
+        setStorageItem(STORAGE_KEYS.PAYMENTS, merged);
+      }
+    }
+  } catch (err) {
+    console.warn("Failed to refresh payments from Supabase:", err);
   }
 }
 
@@ -433,14 +421,38 @@ export const StudyStore = {
       uploadedAt: new Date().toISOString().split("T")[0]
     };
     setStorageItem(STORAGE_KEYS.MATERIALS, [newMat, ...list]);
-    syncMaterialsToSupabase().catch(() => {});
+    if (typeof window !== "undefined") {
+      fetch("/api/materials", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newMat)
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data && data.material && data.material.id) {
+            const current = getStorageItem<MaterialItem[]>(STORAGE_KEYS.MATERIALS, []);
+            const updated = current.map((m) => (m.id === newMat.id ? { ...m, id: data.material.id } : m));
+            setStorageItem(STORAGE_KEYS.MATERIALS, updated);
+          }
+        })
+        .catch((err) => console.warn("Supabase material add error:", err));
+    }
     return newMat;
   },
 
   deleteMaterial(id: string): void {
-    const list = this.getMaterials().filter((m) => m.id !== id);
-    setStorageItem(STORAGE_KEYS.MATERIALS, list);
-    syncMaterialsToSupabase().catch(() => {});
+    const list = this.getMaterials();
+    const target = list.find((m) => m.id === id);
+    const updated = list.filter((m) => m.id !== id);
+    setStorageItem(STORAGE_KEYS.MATERIALS, updated);
+    if (typeof window !== "undefined") {
+      const q = target
+        ? `id=${encodeURIComponent(id)}&title=${encodeURIComponent(target.title)}`
+        : `id=${encodeURIComponent(id)}`;
+      fetch(`/api/materials?${q}`, { method: "DELETE" }).catch((err) =>
+        console.warn("Supabase material delete error:", err)
+      );
+    }
   },
 
   incrementMaterialDownload(id: string): void {
@@ -499,6 +511,13 @@ export const StudyStore = {
       submittedAt: new Date().toLocaleString()
     };
     setStorageItem(STORAGE_KEYS.PAYMENTS, [newPayment, ...list]);
+    if (typeof window !== "undefined") {
+      fetch("/api/payments", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newPayment)
+      }).catch((err) => console.warn("Payment cloud push error:", err));
+    }
     return newPayment;
   },
 
@@ -507,6 +526,21 @@ export const StudyStore = {
       p.id === id ? { ...p, status, notes: notes || p.notes } : p
     );
     setStorageItem(STORAGE_KEYS.PAYMENTS, list);
+    if (typeof window !== "undefined") {
+      fetch("/api/payments", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, status, notes })
+      }).catch((err) => console.warn("Payment status cloud update error:", err));
+    }
+  },
+
+  async refreshPaymentsFromSupabase(): Promise<void> {
+    await refreshPaymentsFromSupabase();
+  },
+
+  async syncPaymentsToSupabase(): Promise<void> {
+    await syncPaymentsToSupabase();
   },
 
   // Messages

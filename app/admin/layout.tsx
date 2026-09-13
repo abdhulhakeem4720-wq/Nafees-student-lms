@@ -19,7 +19,9 @@ import {
   ShieldCheck, 
   LogOut,
   AlertOctagon,
-  ChevronRight
+  ChevronRight,
+  RefreshCw,
+  CheckCircle2
 } from "lucide-react";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -27,6 +29,44 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const pathname = usePathname();
   const [user, setUser] = useState<UserProfile | null>(null);
   const [accessDenied, setAccessDenied] = useState(false);
+  const [syncingAll, setSyncingAll] = useState(false);
+  const [syncToast, setSyncToast] = useState<string | null>(null);
+
+  async function handleGlobalSync() {
+    setSyncingAll(true);
+    try {
+      // 1. Sync materials
+      await StudyStore.refreshMaterialsFromSupabase();
+      // 2. Sync payments
+      await StudyStore.refreshPaymentsFromSupabase();
+      // 3. Fetch students
+      const res = await fetch("/api/students");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.students) && data.students.length > 0) {
+          const local = StudyStore.getRegisteredUsers();
+          const emailMap = new Set(local.map((s) => s.email.toLowerCase()));
+          for (const s of data.students) {
+            if (!emailMap.has(s.email.toLowerCase())) {
+              local.unshift(s);
+            }
+          }
+          localStorage.setItem("study_hub_users", JSON.stringify(local));
+        }
+      }
+
+      // Trigger local storage event so all open tabs and pages re-render
+      window.dispatchEvent(new Event("storage"));
+      setSyncToast("Cloud Synced: All materials, payments, and registrations are up to date.");
+      setTimeout(() => setSyncToast(null), 4000);
+    } catch (err) {
+      console.warn("Global sync error:", err);
+      setSyncToast("Sync failed. Check connection.");
+      setTimeout(() => setSyncToast(null), 4000);
+    } finally {
+      setSyncingAll(false);
+    }
+  }
 
   useEffect(() => {
     if (pathname === "/admin/login") return;
@@ -107,7 +147,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
 
           {/* Admin Profile */}
-          <div className="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200 mb-6 flex items-center gap-3">
+          <div className="p-3.5 rounded-2xl bg-blue-50/80 border border-blue-200 mb-4 flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl border-2 border-blue-400 flex-shrink-0 overflow-hidden shadow-sm bg-white">
               <img src="/nafees-logo.jpg" alt="Nafees" className="w-full h-full object-cover object-top" />
             </div>
@@ -116,6 +156,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="block text-[10px] text-blue-700 font-bold truncate">Academy Director</span>
             </div>
           </div>
+
+          {/* Universal Cloud Sync Button */}
+          <button
+            onClick={handleGlobalSync}
+            disabled={syncingAll}
+            className="w-full mb-5 py-2.5 px-3 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-xs shadow-md shadow-blue-500/20 transition flex items-center justify-center gap-2 active:scale-[0.98]"
+            title="Sync all materials, payments, and students with Supabase cloud"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 ${syncingAll ? "animate-spin" : ""}`} />
+            <span>{syncingAll ? "Syncing Cloud..." : "Sync All Cloud Data"}</span>
+          </button>
 
           {/* Nav Links */}
           <nav className="space-y-1">
@@ -157,7 +208,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Main Admin Area */}
-      <main className="flex-1 p-6 md:p-10 overflow-y-auto">
+      <main className="flex-1 p-6 md:p-10 overflow-y-auto relative">
+        {syncToast && (
+          <div className="fixed top-5 right-5 z-50 p-4 rounded-2xl bg-slate-900 text-white text-xs font-bold shadow-2xl flex items-center gap-2.5 border border-slate-700 animate-fadeIn">
+            <CheckCircle2 className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+            <span>{syncToast}</span>
+          </div>
+        )}
         <div className="max-w-6xl mx-auto">{children}</div>
       </main>
 

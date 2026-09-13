@@ -3,15 +3,75 @@
 import { useEffect, useState } from "react";
 import { StudyStore } from "@/lib/store";
 import { PaymentItem } from "@/lib/mockData";
-import { CreditCard, CheckCircle2, XCircle, Eye, X, Clock, Filter, AlertCircle } from "lucide-react";
+import { CreditCard, CheckCircle2, XCircle, Eye, X, Clock, Filter, AlertCircle, RefreshCw } from "lucide-react";
 
 export default function AdminPaymentsPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [activeSlipModal, setActiveSlipModal] = useState<PaymentItem | null>(null);
+  const [syncingCloud, setSyncingCloud] = useState(false);
+  const [toastMessage, setToastMessage] = useState<{ text: string; type: "success" | "error" } | null>(null);
+
+  function showToast(text: string, type: "success" | "error" = "success") {
+    setToastMessage({ text, type });
+    setTimeout(() => setToastMessage(null), 3500);
+  }
+
+  async function syncFromCloud() {
+    setSyncingCloud(true);
+    try {
+      const res = await fetch("/api/payments");
+      if (res.ok) {
+        const data = await res.json();
+        if (data && Array.isArray(data.payments)) {
+          const cloudPayments: PaymentItem[] = data.payments;
+          const localPayments = StudyStore.getPayments();
+
+          // Push any local items not yet in cloud
+          const cloudIdSet = new Set(cloudPayments.map((p) => p.id));
+          const unSynced = localPayments.filter((p) => !cloudIdSet.has(p.id));
+
+          if (unSynced.length > 0) {
+            await fetch("/api/payments", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ payments: unSynced })
+            });
+            const refreshRes = await fetch("/api/payments");
+            if (refreshRes.ok) {
+              const refreshData = await refreshRes.json();
+              if (refreshData && Array.isArray(refreshData.payments)) {
+                setPayments(refreshData.payments);
+                showToast(`Cloud synchronization complete: ${refreshData.payments.length} payment receipts synced with Supabase.`);
+                return;
+              }
+            }
+          }
+
+          if (cloudPayments.length > 0) {
+            setPayments(cloudPayments);
+            showToast(`Cloud synchronization complete: ${cloudPayments.length} payment slips loaded from Supabase.`);
+          } else if (localPayments.length > 0) {
+            await fetch("/api/payments", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ payments: localPayments })
+            });
+            showToast(`Uploaded ${localPayments.length} payment records to Supabase cloud.`);
+          }
+        }
+      }
+    } catch (err: any) {
+      console.warn("Cloud payments sync error:", err);
+      showToast("Could not sync payments with Supabase cloud", "error");
+    } finally {
+      setSyncingCloud(false);
+    }
+  }
 
   useEffect(() => {
     setPayments(StudyStore.getPayments());
+    syncFromCloud();
   }, []);
 
   function handleStatusChange(id: string, status: "Approved" | "Rejected") {
@@ -19,6 +79,7 @@ export default function AdminPaymentsPage() {
     StudyStore.updatePaymentStatus(id, status, note || undefined);
     setPayments(StudyStore.getPayments());
     if (activeSlipModal?.id === id) setActiveSlipModal(null);
+    showToast(`Payment receipt marked as ${status}.`);
   }
 
   const filteredPayments = payments.filter((p) => {
@@ -29,6 +90,24 @@ export default function AdminPaymentsPage() {
   return (
     <div className="space-y-6">
       
+      {/* Toast Alert */}
+      {toastMessage && (
+        <div
+          className={`p-4 rounded-xl text-xs font-semibold shadow-md flex items-center gap-2 border animate-fadeIn ${
+            toastMessage.type === "success"
+              ? "bg-emerald-50 border-emerald-200 text-emerald-800"
+              : "bg-red-50 border-red-200 text-red-800"
+          }`}
+        >
+          {toastMessage.type === "success" ? (
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+          ) : (
+            <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
+          )}
+          <span>{toastMessage.text}</span>
+        </div>
+      )}
+
       {/* Header */}
       <div className="p-6 rounded-2xl glass-card border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -40,21 +119,33 @@ export default function AdminPaymentsPage() {
           <p className="text-xs text-slate-500">Review student uploaded bank slips and verify course enrollments.</p>
         </div>
 
-        {/* Filter Pills */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
-          {["all", "Pending", "Approved", "Rejected"].map((st) => (
-            <button
-              key={st}
-              onClick={() => setStatusFilter(st)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
-                statusFilter === st
-                  ? "bg-blue-600 text-white shadow-sm"
-                  : "text-slate-600 hover:text-slate-900"
-              }`}
-            >
-              {st === "all" ? "All Payments" : st}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-center gap-2.5">
+          <button
+            onClick={syncFromCloud}
+            disabled={syncingCloud}
+            className="btn-secondary text-xs py-2 px-3 inline-flex items-center gap-1.5 shadow-sm"
+            title="Synchronize all payment slips with Supabase cloud"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${syncingCloud ? "animate-spin" : ""}`} />
+            <span>{syncingCloud ? "Syncing..." : "Sync Cloud"}</span>
+          </button>
+
+          {/* Filter Pills */}
+          <div className="flex items-center gap-1.5 p-1 rounded-xl bg-slate-100 border border-slate-200">
+            {["all", "Pending", "Approved", "Rejected"].map((st) => (
+              <button
+                key={st}
+                onClick={() => setStatusFilter(st)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                  statusFilter === st
+                    ? "bg-blue-600 text-white shadow-sm"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                {st === "all" ? "All Payments" : st}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

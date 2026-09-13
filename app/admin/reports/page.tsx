@@ -4,15 +4,31 @@ import { useEffect, useState } from "react";
 import { StudyStore } from "@/lib/store";
 import { PaymentItem, SubjectItem } from "@/lib/mockData";
 import Logo from "@/components/Logo";
-import { Download, Printer, BarChart3, FileSpreadsheet } from "lucide-react";
+import { Download, Printer, BarChart3, FileSpreadsheet, RefreshCw } from "lucide-react";
 
 export default function AdminReportsPage() {
   const [payments, setPayments] = useState<PaymentItem[]>([]);
   const [subjects, setSubjects] = useState<SubjectItem[]>([]);
+  const [syncing, setSyncing] = useState(false);
+
+  async function handleSync() {
+    setSyncing(true);
+    try {
+      await Promise.allSettled([
+        StudyStore.refreshPaymentsFromSupabase(),
+        StudyStore.refreshMaterialsFromSupabase()
+      ]);
+      setPayments(StudyStore.getPayments());
+      setSubjects(StudyStore.getSubjects());
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   useEffect(() => {
     setPayments(StudyStore.getPayments());
     setSubjects(StudyStore.getSubjects());
+    handleSync();
   }, []);
 
   const approvedPayments = payments.filter((p) => p.status === "Approved");
@@ -52,6 +68,15 @@ export default function AdminReportsPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            onClick={handleSync}
+            disabled={syncing}
+            className="btn-secondary text-xs py-2 px-3 inline-flex items-center gap-1.5 shadow-sm"
+            title="Sync fresh payment data from Supabase cloud"
+          >
+            <RefreshCw className={`w-3.5 h-3.5 text-blue-600 ${syncing ? "animate-spin" : ""}`} />
+            <span>{syncing ? "Syncing..." : "Sync Cloud"}</span>
+          </button>
           <button onClick={handleExportCSV} className="btn-secondary text-xs py-2 px-4 inline-flex items-center gap-1.5 shadow-sm">
             <Download className="w-3.5 h-3.5 text-slate-600" />
             Export CSV

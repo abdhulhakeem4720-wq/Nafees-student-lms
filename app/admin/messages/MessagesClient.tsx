@@ -12,7 +12,8 @@ import {
   BookOpen, 
   Sparkles, 
   Bell, 
-  Clock 
+  Clock,
+  RefreshCw 
 } from "lucide-react";
 
 export default function AdminMessagesPage() {
@@ -57,23 +58,38 @@ export default function AdminMessagesPage() {
     <div className="space-y-8">
       
       {/* Header */}
-      <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200 bg-white">
-        <div className="flex items-center gap-3 mb-2">
-          <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
-            <Send className="w-5 h-5" />
+      <div className="p-6 sm:p-8 rounded-3xl glass-card border border-slate-200 bg-white flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-blue-600 text-white flex items-center justify-center">
+              <Send className="w-5 h-5" />
+            </div>
+            <div>
+              <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider block">
+                COMMUNICATIONS & BROADCASTS
+              </span>
+              <h1 className="text-xl sm:text-2xl font-black text-slate-900">
+                Batch Announcements & Email Notifications
+              </h1>
+            </div>
           </div>
-          <div>
-            <span className="text-[11px] font-bold text-blue-600 uppercase tracking-wider block">
-              COMMUNICATIONS & BROADCASTS
-            </span>
-            <h1 className="text-xl sm:text-2xl font-black text-slate-900">
-              Batch Announcements & Email Notifications
-            </h1>
-          </div>
+          <p className="text-xs text-slate-500 mt-1">
+            Broadcast updates, live class Zoom reminders, or tute distribution alerts separately by Grade (6–11) or Subject.
+          </p>
         </div>
-        <p className="text-xs text-slate-500 mt-1">
-          Broadcast updates, live class Zoom reminders, or tute distribution alerts separately by Grade (6–11) or Subject.
-        </p>
+
+        <button
+          onClick={() => {
+            setMessages(StudyStore.getMessages());
+            setSubjects(StudyStore.getSubjects());
+            alert("Broadcast messages re-synchronized.");
+          }}
+          className="btn-secondary text-xs py-2 px-3.5 inline-flex items-center gap-1.5 shadow-sm"
+          title="Synchronize announcements"
+        >
+          <RefreshCw className="w-3.5 h-3.5 text-blue-600" />
+          <span>Sync Cloud</span>
+        </button>
       </div>
 
       <div className="grid md:grid-cols-12 gap-8">
