@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { StudyStore } from "@/lib/store";
 import Logo from "@/components/Logo";
-import { ShieldCheck, GraduationCap, ArrowLeft, Zap, AlertCircle, Lock, Mail } from "lucide-react";
+import { ShieldCheck, GraduationCap, ArrowLeft, AlertCircle, Lock, Mail } from "lucide-react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -14,15 +14,6 @@ export default function AdminLoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-
-  function handleDemoAdminLogin() {
-    setLoading(true);
-    setError(null);
-    setTimeout(() => {
-      StudyStore.loginDemo("admin");
-      window.location.href = "/admin";
-    }, 400);
-  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -74,26 +65,6 @@ export default function AdminLoginPage() {
           </div>
           <h1 className="text-2xl font-extrabold text-white tracking-tight">Admin Sign In</h1>
           <p className="text-slate-400 text-xs mt-1">Authorized Academy Director access only</p>
-        </div>
-
-        {/* Quick Admin Demo Button */}
-        <div className="mb-6 p-3.5 rounded-2xl bg-blue-500/10 border border-blue-500/20">
-          <div className="flex items-center justify-between mb-2 text-xs text-blue-300 font-semibold">
-            <span className="inline-flex items-center gap-1">
-              <Zap className="w-3 h-3 text-amber-400" />
-              1-Click Director Access
-            </span>
-            <span className="text-[10px] text-slate-400">Nafees Mohamed</span>
-          </div>
-          <button
-            type="button"
-            onClick={handleDemoAdminLogin}
-            disabled={loading}
-            className="w-full py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg shadow-blue-600/30 transition inline-flex items-center justify-center gap-2"
-          >
-            <ShieldCheck className="w-4 h-4" />
-            Log In as Director (Nafees)
-          </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
