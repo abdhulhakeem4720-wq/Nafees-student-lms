@@ -45,7 +45,7 @@ export const MOCK_ADMIN_USER: UserProfile = {
   password: "Nfsmhd@000"
 };
 
-const STORAGE_KEYS = {
+export const STORAGE_KEYS = {
   SESSION: "study_hub_session",
   SUBJECTS: "study_hub_subjects",
   MATERIALS: "study_hub_materials",
@@ -57,6 +57,22 @@ const STORAGE_KEYS = {
   PORTFOLIOS: "study_hub_portfolios",
   ARTICLES: "study_hub_articles"
 };
+
+// Clean handover reset: wipes all old test/demo data on client browser load
+const HANDOVER_CLEAN_KEY = "study_hub_clean_handover_v2";
+if (typeof window !== "undefined") {
+  try {
+    if (!localStorage.getItem(HANDOVER_CLEAN_KEY)) {
+      localStorage.removeItem(STORAGE_KEYS.MATERIALS);
+      localStorage.removeItem(STORAGE_KEYS.QUIZZES);
+      localStorage.removeItem(STORAGE_KEYS.PAYMENTS);
+      localStorage.removeItem(STORAGE_KEYS.MESSAGES);
+      localStorage.removeItem(STORAGE_KEYS.USERS);
+      localStorage.removeItem(STORAGE_KEYS.SESSION);
+      localStorage.setItem(HANDOVER_CLEAN_KEY, "true");
+    }
+  } catch {}
+}
 
 function getStorageItem<T>(key: string, defaultValue: T): T {
   if (typeof window === "undefined") return defaultValue;
